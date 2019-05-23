@@ -23,7 +23,6 @@ class Player(object):
         return self.__paddle 
 
     def next_pos(self):
-        
-        cur_pos = self.paddle.y_pos
+        cur_pos = self.__paddle.y_pos
         self.__strategy.next_pos(cur_pos)
         print("Player moved")
