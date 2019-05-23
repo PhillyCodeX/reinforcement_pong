@@ -1,4 +1,5 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
+import pygame 
 
 class Paddle(object):
     def __init__(self, p_y_pos, p_x_pos, p_length = 100):
@@ -60,6 +61,10 @@ class Ball(object):
         self.__x_dir = p_x_dir
         self.__y_dir = p_y_dir
 
+    def next_pos(self, p_time_sec):
+        self.x_pos += self.velocity * self.x_dir * p_time_sec
+        self.y_pos += self.velocity * self.y_dir * p_time_sec
+
     def __getvelocity(self):
         return self.__velocity
 
@@ -107,6 +112,41 @@ class Area(object):
         self.__paddle1 = Paddle(y_middle,10)
         self.__paddle2 = Paddle(y_middle,p_width-10)
         self.__ball = Ball(x_middle,y_middle,x_middle+10,y_middle+5)
+
+    def check_paddle_moveable(self, p_paddle):
+        if p_paddle.y_pos < 0 - p_paddle.length / 2:
+            p_paddle.up_moveable = False
+        else:
+            p_paddle.up_moveable   = True
+
+        if p_paddle.y_pos > self.height - p_paddle.length / 2:
+            p_paddle.down_moveable = False
+        else:
+            p_paddle.down_moveable = True
+
+    def resolve_collisions(self):
+        if self.ball.y_pos > self.height or self.ball.y_pos < 0:
+            self.ball.y_dir = -self.ball.y_dir
+        
+        if self.ball.x_pos > self.paddle2.x_pos or self.ball.x_pos < self.paddle1.x_pos:
+            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
+                self.ball.x_dir = -self.ball.x_dir
+            if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
+                self.ball.x_dir = -self.ball.x_dir
+        
+        score_for = 0
+
+        if self.ball.x_pos > self.width:
+            score_for = 1
+            self.ball.x_pos = self.width / 2
+            self.ball.y_pos = self.height / 2
+
+        if self.ball.x_pos < 0:
+            score_for = 2
+            self.ball.x_pos = self.width / 2
+            self.ball.y_pos = self.height / 2
+
+        return score_for
 
     def __getheight(self):
         return self.__height
@@ -175,9 +215,11 @@ class Player(object):
     def __getpoints(self):
         return self.__points 
 
-    def next_pos(self, p_event):
-        cur_pos = self.__paddle.y_pos
-        self.__strategy.next_pos(cur_pos, p_event)
+    def next_pos(self, p_dir_up):
+        cur_pos = self.paddle.y_pos
+        vel = self.paddle.velocity
+
+        self.strategy.next_pos(cur_pos, vel, p_dir_up)
         print("Player moved")
 
     name = property(__getname, __setname)
@@ -215,7 +257,52 @@ class Game(object):
         self.player2.paddle = self.__area.paddle2 
 
     def play(self):
-        return ""
+        pygame.init()
+        clock = pygame.time.Clock()
+
+        resolution = (self.area.width, self.area.height)
+        screen = pygame.display.set_mode(resolution)
+        pygame.display.set_caption("Smart Pong")
+        score_font = pygame.font.SysFont("Clear Sans Regular", 30)
+
+        cancel = False
+
+        while not cancel:
+            pressed_down = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    cancel = True
+                    pygame.quit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        dir_up = False
+                    if event.key == pygame.K_UP:
+                        dir_up = True
+
+                if event.type == pygame.KEYUP:
+                    dir_up = None
+
+            self.area.check_paddle_moveable(self,self.player1.paddle)
+            self.area.check_paddle_moveable(self,self.player2.paddle)
+
+            self.player1.next_pos(dir_up)     
+            self.player2.next_pos(dir_up)     
+
+            circle_time_passed = clock.tick(60)
+            circle_time_sec = circle_time_passed / 1000.0
+            
+            self.area.ball.next_pos(circle_time_sec)
+            score_for = self.area.resolve_colissions(self)
+
+            if score_for == 1:
+                self.player1.points += 1
+            elif score_for == 2:
+                self.player2.points += 1
+            
+            score_for = 0
+            
+        return "Game Finished!!!"
 
     def __setarea(self, p_area):
         self.__area = p_area
