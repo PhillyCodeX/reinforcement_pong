@@ -1,9 +1,13 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
 
 class Paddle(object):
-    def __init__(self, p_y_pos, p_length = 10):
+    def __init__(self, p_y_pos, p_x_pos, p_length = 100):
         self.__length = p_length
         self.__y_pos = p_y_pos
+        self.__x_pos = p_x_pos
+        self.__up_moveable = True
+        self.__down_moveable = True
+        self.__velocity = 10
 
     def __getlength(self):
         return self.__length
@@ -17,8 +21,36 @@ class Paddle(object):
     def __sety_pos(self, p_y_pos):
         self.__y_pos = p_y_pos
 
+    def __getx_pos(self):
+        return self.__x_pos
+
+    def __setx_pos(self, p_x_pos):
+        self.__x_pos = p_x_pos
+
+    def __getup_moveable(self):
+        return self.__up_moveable 
+    
+    def __setup_moveable(self, p_bool):
+        self.__up_moveable = p_bool
+
+    def __getdown_moveable(self):
+        return self.__down_moveable 
+    
+    def __setdown_moveable(self, p_bool):
+        self.__down_moveable = p_bool
+    
+    def __getvelocity(self):
+        return self.__velocity 
+
+    def __setvelocity(self, p_vel):
+        self.__velocity = p_vel
+
     length = property(__getlength, __setlength)
     y_pos = property(__gety_pos, __sety_pos)
+    x_pos = property(__getx_pos, __setx_pos)
+    up_moveable = property(__getup_moveable, __setup_moveable)
+    down_moveable = property(__getdown_moveable, __setdown_moveable)
+    velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
     def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=10):
@@ -72,8 +104,8 @@ class Area(object):
         y_middle = p_height / 2
         x_middle = p_width / 2
 
-        self.__paddle1 = Paddle(y_middle)
-        self.__paddle2 = Paddle(y_middle)
+        self.__paddle1 = Paddle(y_middle,10)
+        self.__paddle2 = Paddle(y_middle,p_width-10)
         self.__ball = Ball(x_middle,y_middle,x_middle+10,y_middle+5)
 
     def __getheight(self):
@@ -117,6 +149,7 @@ class Player(object):
         self.__name = p_name
         self.__strategy = p_strategy
         self.__paddle = None
+        self.__points = 0
     
     def __setname(self, p_name):
         self.__name = p_name
@@ -136,14 +169,21 @@ class Player(object):
     def __getpaddle(self):
         return self.__paddle 
 
-    def next_pos(self):
+    def __setpoints(self, p_points):
+        self.__points = p_points
+    
+    def __getpoints(self):
+        return self.__points 
+
+    def next_pos(self, p_event):
         cur_pos = self.__paddle.y_pos
-        self.__strategy.next_pos(cur_pos)
+        self.__strategy.next_pos(cur_pos, p_event)
         print("Player moved")
 
     name = property(__getname, __setname)
     strategy = property(__getstrategy, __setstrategy)
     paddle = property(__getpaddle, __setpaddle)
+    points = property(__getpoints, __setpoints)
 
 class Game(object):
     def __init__(self):
@@ -174,6 +214,13 @@ class Game(object):
         self.player2 = self.newPlayer()
         self.player2.paddle = self.__area.paddle2 
 
-
     def play(self):
         return ""
+
+    def __setarea(self, p_area):
+        self.__area = p_area
+
+    def __getarea(self):
+        return self.__area
+
+    area = property(__getarea, __setarea)
