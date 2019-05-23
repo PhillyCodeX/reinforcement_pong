@@ -18,9 +18,9 @@ class ManualStrat(Strategy):
         if p_dir_up is None:
             return p_pos
         elif p_dir_up == True:
-            return p_pos+p_vel
-        else:
             return p_pos-p_vel
+        else:
+            return p_pos+p_vel
 
 class ReinforcedStrat(Strategy):
     

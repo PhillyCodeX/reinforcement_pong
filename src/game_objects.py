@@ -8,7 +8,7 @@ class Paddle(object):
         self.__x_pos = p_x_pos
         self.__up_moveable = True
         self.__down_moveable = True
-        self.__velocity = 10
+        self.__velocity = 20
 
     def __getlength(self):
         return self.__length
@@ -54,7 +54,7 @@ class Paddle(object):
     velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
-    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=10):
+    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=80):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
         self.__y_pos = p_y_pos
@@ -102,7 +102,7 @@ class Ball(object):
     y_dir = property(__gety_dir, __sety_dir)
 
 class Area(object):
-    def __init__(self, p_height=300, p_width=300):
+    def __init__(self, p_height=720, p_width=1280):
         self.__height = p_height
         self.__width = p_width
 
@@ -111,15 +111,15 @@ class Area(object):
 
         self.__paddle1 = Paddle(y_middle,10)
         self.__paddle2 = Paddle(y_middle,p_width-10)
-        self.__ball = Ball(x_middle,y_middle,x_middle+10,y_middle+5)
+        self.__ball = Ball(x_middle,y_middle,5,7)
 
     def check_paddle_moveable(self, p_paddle):
-        if p_paddle.y_pos < 0 - p_paddle.length / 2:
+        if p_paddle.y_pos < 0:
             p_paddle.up_moveable = False
         else:
             p_paddle.up_moveable   = True
 
-        if p_paddle.y_pos > self.height - p_paddle.length / 2:
+        if p_paddle.y_pos + p_paddle.length > self.height:
             p_paddle.down_moveable = False
         else:
             p_paddle.down_moveable = True
@@ -128,12 +128,13 @@ class Area(object):
         if self.ball.y_pos > self.height or self.ball.y_pos < 0:
             self.ball.y_dir = -self.ball.y_dir
         
-        if self.ball.x_pos > self.paddle2.x_pos or self.ball.x_pos < self.paddle1.x_pos:
-            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
-                self.ball.x_dir = -self.ball.x_dir
+        if self.ball.x_pos > self.paddle2.x_pos:
             if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
                 self.ball.x_dir = -self.ball.x_dir
-        
+        elif self.ball.x_pos < self.paddle1.x_pos:
+            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
+                self.ball.x_dir = -self.ball.x_dir
+
         score_for = 0
 
         if self.ball.x_pos > self.width:
@@ -218,9 +219,10 @@ class Player(object):
     def next_pos(self, p_dir_up):
         cur_pos = self.paddle.y_pos
         vel = self.paddle.velocity
-
-        self.strategy.next_pos(cur_pos, vel, p_dir_up)
         print("Player moved")
+
+        new_pos = self.strategy.next_pos(cur_pos, vel, p_dir_up)
+        self.paddle.y_pos = new_pos
 
     name = property(__getname, __setname)
     strategy = property(__getstrategy, __setstrategy)
@@ -236,8 +238,8 @@ class Game(object):
     def newPlayer(self):
         name = input("Enter your name: ")
         
-        chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
-
+        #chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
+        chosen_strategy = 'manual'
         if chosen_strategy == 'manual':
             strategy = ManualStrat()
         elif chosen_strategy == 'dumb':
@@ -266,6 +268,7 @@ class Game(object):
         score_font = pygame.font.SysFont("Clear Sans Regular", 30)
 
         cancel = False
+        dir_up = None
 
         while not cancel:
             pressed_down = False
@@ -283,8 +286,8 @@ class Game(object):
                 if event.type == pygame.KEYUP:
                     dir_up = None
 
-            self.area.check_paddle_moveable(self,self.player1.paddle)
-            self.area.check_paddle_moveable(self,self.player2.paddle)
+            self.area.check_paddle_moveable(self.player1.paddle)
+            self.area.check_paddle_moveable(self.player2.paddle)
 
             self.player1.next_pos(dir_up)     
             self.player2.next_pos(dir_up)     
@@ -293,7 +296,7 @@ class Game(object):
             circle_time_sec = circle_time_passed / 1000.0
             
             self.area.ball.next_pos(circle_time_sec)
-            score_for = self.area.resolve_colissions(self)
+            score_for = self.area.resolve_collisions()
 
             if score_for == 1:
                 self.player1.points += 1
