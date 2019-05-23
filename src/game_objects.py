@@ -1,9 +1,6 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
 
 class Paddle(object):
-    length = property(__getlength, __setlength)
-    y_pos = property(__gety_pos, __sety_pos)
-
     def __init__(self, p_y_pos, p_length = 10):
         self.__length = p_length
         self.__y_pos = p_y_pos
@@ -20,13 +17,10 @@ class Paddle(object):
     def __sety_pos(self, p_y_pos):
         self.__y_pos = p_y_pos
 
-class Ball(object):
-    velocity = property(__getvelocity, __setvelocity)
-    x_pos = property(__getx_pos, __setx_pos)
+    length = property(__getlength, __setlength)
     y_pos = property(__gety_pos, __sety_pos)
-    x_dir = property(__getx_dir, __setx_dir)
-    y_dir = property(__gety_dir, __sety_dir)
 
+class Ball(object):
     def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=10):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
@@ -64,14 +58,13 @@ class Ball(object):
     def __sety_dir(self, p_y_dir):
         self.__y_dir = p_y_dir
 
+    velocity = property(__getvelocity, __setvelocity)
+    x_pos = property(__getx_pos, __setx_pos)
+    y_pos = property(__gety_pos, __sety_pos)
+    x_dir = property(__getx_dir, __setx_dir)
+    y_dir = property(__gety_dir, __sety_dir)
 
 class Area(object):
-    height = property(__getheight, __setheight)
-    width = property(__getwidth, __setwidth)
-    paddle1 = property(__getpaddle1, __setpaddle1)
-    paddle2 = property(__getpaddle2, __setpaddle2)
-    ball = property(__getball, __setball)
-
     def __init__(self, p_height=300, p_width=300):
         self.__height = p_height
         self.__width = p_width
@@ -113,11 +106,13 @@ class Area(object):
     def __setball(self, p_ball):
         self.__ball = p_ball
     
-class Player(object):
-    name = property(__getname, __setname)
-    strategy = property(__getstrategy, __setstrategy)
-    paddle = property(__getpaddle, __setpaddle)
+    height = property(__getheight, __setheight)
+    width = property(__getwidth, __setwidth)
+    paddle1 = property(__getpaddle1, __setpaddle1)
+    paddle2 = property(__getpaddle2, __setpaddle2)
+    ball = property(__getball, __setball)
 
+class Player(object):
     def __init__(self, p_name, p_strategy):
         self.__name = p_name
         self.__strategy = p_strategy
@@ -145,6 +140,10 @@ class Player(object):
         cur_pos = self.__paddle.y_pos
         self.__strategy.next_pos(cur_pos)
         print("Player moved")
+
+    name = property(__getname, __setname)
+    strategy = property(__getstrategy, __setstrategy)
+    paddle = property(__getpaddle, __setpaddle)
 
 class Game(object):
     def __init__(self):
