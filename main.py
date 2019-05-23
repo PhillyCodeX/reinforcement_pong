@@ -13,5 +13,7 @@ def main():
     
     new_game.play()
 
+    print("Game finished!!!")
+    
 if __name__ == '__main__': 
     main() 
