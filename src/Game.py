@@ -1,5 +1,5 @@
-import src.Area as Area
-import src.Player as Player
+from Area import Area
+from Player import Player
 
 class Game(object):
     def __init__(self):
