@@ -301,8 +301,19 @@ class Game(object):
                 self.player2.points += 1
             
             score_for = 0
-            
-        return "Game Finished!!!"
+
+            screen.fill((0,0,0))
+
+            pygame.draw.rect(screen, (255,255,255),[self.area.paddle1.x_pos,self.area.paddle1.y_pos,10,self.area.paddle1.length])
+            pygame.draw.rect(screen, (255,255,255),[self.area.paddle2.x_pos,self.area.paddle2.y_pos,10,self.area.paddle2.length])
+            pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
+
+            screen.blit(score_font.render(str(self.player1.points), True, (255,255,255)), (self.area.width / 4, 50))
+            screen.blit(score_font.render(str(self.player2.points), True, (255,255,255)), (self.area.width / 1.25, 50))
+
+            pygame.display.flip()
+
+            clock.tick(60)
 
     def __setarea(self, p_area):
         self.__area = p_area
