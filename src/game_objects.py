@@ -230,6 +230,7 @@ class Game(object):
         self.__area = Area()
         self.__player1 = None
         self.__player2 = None
+        self.__winner = None
 
     def newPlayer(self):
         name = input("Enter your name: ")
@@ -300,6 +301,13 @@ class Game(object):
             elif score_for == 2:
                 self.player2.points += 1
             
+            if self.player1.points == 10:
+                self.winner = self.player1
+                return
+            elif self.player2.points == 10:
+                self.winner = self.player2
+                return
+
             score_for = 0
 
             screen.fill((0,0,0))
@@ -319,4 +327,11 @@ class Game(object):
     def __getarea(self):
         return self.__area
 
+    def __setwinner(self, p_player):
+        self.__winner = p_player
+
+    def __getwinner(self):
+        return self.__winner
+
     area = property(__getarea, __setarea)
+    winner = property(__getwinner, __setwinner)
