@@ -272,6 +272,7 @@ class Game(object):
                 if event.type == pygame.QUIT:
                     cancel = True
                     pygame.quit()
+                    return
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
