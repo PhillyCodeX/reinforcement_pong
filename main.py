@@ -36,5 +36,6 @@ def main():
                 new_game.player1.points = 0
                 new_game.player2.points = 0
     
+
 if __name__ == '__main__': 
     main() 
