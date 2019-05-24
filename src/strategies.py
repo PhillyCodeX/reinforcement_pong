@@ -1,4 +1,5 @@
 import abc
+import random
 
 class Strategy(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -17,12 +18,22 @@ class Strategy(metaclass=abc.ABCMeta):
     paddle = property(__getpaddle,__setpaddle)
 
 class DumbStrat(Strategy):
-    
+    def __init__(self):
+        self.__up_switch = True
+
     def next_pos(self, p_paddle, p_dir_up):
-        pass
+
+        if p_paddle.up_moveable == False:
+            self.__up_switch = False
+        elif p_paddle.down_moveable == False:
+            self.__up_switch = True
+
+        if self.__up_switch:
+            p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
+        else:
+            p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class ManualStrat(Strategy):
-    inputMap = [False, False] 
 
     def next_pos(self, p_paddle, p_dir_up):
 

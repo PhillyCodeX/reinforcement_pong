@@ -235,14 +235,16 @@ class Game(object):
     def newPlayer(self):
         name = input("Enter your name: ")
         
-        #chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
-        chosen_strategy = 'manual'
+        chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
+        
         if chosen_strategy == 'manual':
             strategy = ManualStrat()
         elif chosen_strategy == 'dumb':
             strategy = DumbStrat()
         elif chosen_strategy == 'rl':
             strategy = ReinforcedStrat()
+        else:
+            strategy = DumbStrat()
         
         player = Player(name,strategy)
         
