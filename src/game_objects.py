@@ -54,7 +54,7 @@ class Paddle(object):
     velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
-    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=80):
+    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=50):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
         self.__y_pos = p_y_pos
@@ -206,6 +206,7 @@ class Player(object):
 
     def __setpaddle(self, p_paddle):
         self.__paddle = p_paddle
+        self.__strategy.paddle = p_paddle
 
     def __getpaddle(self):
         return self.__paddle 
@@ -217,12 +218,7 @@ class Player(object):
         return self.__points 
 
     def next_pos(self, p_dir_up):
-        cur_pos = self.paddle.y_pos
-        vel = self.paddle.velocity
-        print("Player moved")
-
-        new_pos = self.strategy.next_pos(cur_pos, vel, p_dir_up)
-        self.paddle.y_pos = new_pos
+        self.strategy.next_pos(self.paddle, p_dir_up)
 
     name = property(__getname, __setname)
     strategy = property(__getstrategy, __setstrategy)
@@ -315,8 +311,6 @@ class Game(object):
             screen.blit(score_font.render(str(self.player2.points), True, (255,255,255)), (self.area.width / 1.25, 50))
 
             pygame.display.flip()
-
-            clock.tick(60)
 
     def __setarea(self, p_area):
         self.__area = p_area
