@@ -113,9 +113,6 @@ class Area(object):
         self.__paddle1 = Paddle(y_middle,10)
         self.__paddle2 = Paddle(y_middle,p_width-10)
         self.__ball = Ball(x_middle,y_middle,5,7)
-        self.__cur_rgb_state = None
-        self.__last_states = list()
-        self.__n_of_states = 4
 
     def check_paddle_moveable(self, p_paddle):
         if p_paddle.y_pos < 0:
@@ -183,29 +180,13 @@ class Area(object):
     def __setball(self, p_ball):
         self.__ball = p_ball
 
-    def __getcur_rgb_state(self):
-        return self.__cur_rgb_state
-
-    def __setcur_rgb_state(self, p_state):
-        self.__cur_rgb_state = p_state
-        self.__last_states.append(self.__cur_rgb_state)
-
-        if len(self.__last_states) > self.__n_of_states:
-            self.__last_states.pop(0)
-
-    def __getn_of_states(self):
-        return self.__n_of_states
-
-    def __setn_of_states(self, p_n):
-        self.__n_of_states = p_n
+   
     
     height = property(__getheight, __setheight)
     width = property(__getwidth, __setwidth)
     paddle1 = property(__getpaddle1, __setpaddle1)
     paddle2 = property(__getpaddle2, __setpaddle2)
     ball = property(__getball, __setball)
-    cur_rgb_state = property(__getcur_rgb_state, __setcur_rgb_state)
-    n_of_states = property(__getn_of_states, __setn_of_states)
 
 class Player(object):
     def __init__(self, p_name, p_strategy):
@@ -253,6 +234,10 @@ class Game(object):
         self.__player1 = None
         self.__player2 = None
         self.__winner = None
+
+        self.__cur_rgb_matrix = None
+        self.__last_states = list()
+        self.__n_of_images = 4
 
     def newPlayer(self):
         name = input("Enter your name: ")
@@ -346,7 +331,8 @@ class Game(object):
             pygame.display.flip()
 
             surface_array = pygame.surfarray.array3d(pygame.display.get_surface())
-            self.area.cur_rgb_state = surface_array
+            self.cur_rgb_matrix = surface_array
+
 
     def __setarea(self, p_area):
         self.__area = p_area
@@ -360,5 +346,27 @@ class Game(object):
     def __getwinner(self):
         return self.__winner
 
+    def __getcur_rgb_matrix(self):
+        return self.__cur_rgb_matrix
+
+    def __setcur_rgb_matrix(self, p_matrix):
+        self.__cur_rgb_matrix = p_matrix
+        self.__last_states.append(self.__cur_rgb_matrix)
+
+        if len(self.__last_states) > self.__n_of_images:
+            self.__last_states.pop(0)
+            # State an Strategie melden
+        elif len(self.__last_states) == self.__n_of_images:
+            # State an Strategie melden
+            pass
+    
+    def __getn_of_images(self):
+        return self.__n_of_images
+
+    def __setn_of_images(self, p_n):
+        self.__n_of_images = p_n
+
     area = property(__getarea, __setarea)
     winner = property(__getwinner, __setwinner)
+    cur_rgb_matrix = property(__getcur_rgb_matrix, __setcur_rgb_matrix)
+    n_of_images = property(__getn_of_images, __setn_of_images)
