@@ -1,5 +1,6 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
 import pygame 
+import pygame.surfarray
 
 class Paddle(object):
     def __init__(self, p_y_pos, p_x_pos, p_length = 100):
@@ -102,7 +103,7 @@ class Ball(object):
     y_dir = property(__gety_dir, __sety_dir)
 
 class Area(object):
-    def __init__(self, p_height=720, p_width=1280):
+    def __init__(self, p_height=370, p_width=640):
         self.__height = p_height
         self.__width = p_width
 
@@ -112,6 +113,9 @@ class Area(object):
         self.__paddle1 = Paddle(y_middle,10)
         self.__paddle2 = Paddle(y_middle,p_width-10)
         self.__ball = Ball(x_middle,y_middle,5,7)
+        self.__cur_rgb_state = None
+        self.__last_states = list()
+        self.__n_of_states = 4
 
     def check_paddle_moveable(self, p_paddle):
         if p_paddle.y_pos < 0:
@@ -178,12 +182,30 @@ class Area(object):
     
     def __setball(self, p_ball):
         self.__ball = p_ball
+
+    def __getcur_rgb_state(self):
+        return self.__cur_rgb_state
+
+    def __setcur_rgb_state(self, p_state):
+        self.__cur_rgb_state = p_state
+        self.__last_states.append(self.__cur_rgb_state)
+
+        if len(self.__last_states) > self.__n_of_states:
+            self.__last_states.pop(0)
+
+    def __getn_of_states(self):
+        return self.__n_of_states
+
+    def __setn_of_states(self, p_n):
+        self.__n_of_states = p_n
     
     height = property(__getheight, __setheight)
     width = property(__getwidth, __setwidth)
     paddle1 = property(__getpaddle1, __setpaddle1)
     paddle2 = property(__getpaddle2, __setpaddle2)
     ball = property(__getball, __setball)
+    cur_rgb_state = property(__getcur_rgb_state, __setcur_rgb_state)
+    n_of_states = property(__getn_of_states, __setn_of_states)
 
 class Player(object):
     def __init__(self, p_name, p_strategy):
@@ -322,6 +344,9 @@ class Game(object):
             screen.blit(score_font.render(str(self.player2.points), True, (255,255,255)), (self.area.width / 1.25, 50))
 
             pygame.display.flip()
+
+            surface_array = pygame.surfarray.array3d(pygame.display.get_surface())
+            self.area.cur_rgb_state = surface_array
 
     def __setarea(self, p_area):
         self.__area = p_area
