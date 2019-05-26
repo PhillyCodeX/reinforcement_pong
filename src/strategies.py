@@ -59,12 +59,44 @@ class ReinforcedStrat(Strategy):
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = list()
+        
+        self.__s = None
+        self.__a = None
+        self.__r_1 = None
+        self.__s_1 = None
 
     def next_pos(self, p_paddle, p_dir_up):
-        pass
+        learning_rate = 0.1
+        discount_rate = 0.99
 
+        exploration_rate = 1
+        max_exploration_rate = 1
+        min_exploration_rate = 0.01
+        exploration_decay_rate = 0.001
+
+        exploration_rate_threshold = random.uniform(0,1)
+        
+        if exploration_rate_threshold > exploration_rate:
+            #choose best action
+            pass
+        else:
+            #choose random action
+            pass
+
+        up_switch = True
+
+        if up_switch:
+            p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
+        else:
+            p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
+        
+        
     def notify_score(self, p_score):
-        if p_score == 1:
-            pass
-        elif p_score == 0:
-            pass
+        self.__r_1 = p_score
+
+    def new_state(self, p_state, p_is_first_state=False):
+        if p_is_first_state:
+            self.__s = p_state
+        else:
+            self.__s = self.__s_1
+            self.__s = p_state

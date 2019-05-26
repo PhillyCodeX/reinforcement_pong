@@ -307,9 +307,13 @@ class Game(object):
 
             if score_for == 1:
                 self.player1.points += 1
+                self.player1.strategy.notify_score(1)
+                self.player2.strategy.notify_score(0)
             elif score_for == 2:
                 self.player2.points += 1
-            
+                self.player1.strategy.notify_score(0)
+                self.player2.strategy.notify_score(1)
+
             if self.player1.points == 10:
                 self.winner = self.player1
                 return
