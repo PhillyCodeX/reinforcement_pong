@@ -37,11 +37,14 @@ class ReplayMemory:
         self.__capacity = p_cap
         self.__memory = list()
 
-    def push(self, p_new_state):
+    def enqueue(self, p_new_state):
         self.__memory.append(p_new_state)
 
         if len(self.__memory)>self.__capacity:
-            self.__memory.pop(0)
+            self.dequeue()
+
+    def dequeue(self):
+        self.__memory.pop(0)
 
     def __getmemory(self):
         return self.__memory
