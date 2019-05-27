@@ -3,6 +3,9 @@ import random
 from copy import copy
 from src.rl_objects import ReplayMemory, Experience, DQN
 
+import torch
+import torch.optim as optim
+
 class Strategy(metaclass=abc.ABCMeta):
     def __init__(self):
        self.__paddle = None
@@ -52,17 +55,25 @@ class ManualStrat(Strategy):
 
 class ReinforcedStrat(Strategy):
     def __init__(self):
-        self.__policy_network = None
-        self.__target_network = None
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.__policy_network = DQN(370, 720, 2).to(device)
+        self.__target_network = DQN(370, 720, 2).to(device)
+        self.__target_network.load_state_dict(self.__policy_network.state_dict())
+        self.__target_network.eval()
+
+        self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
+
+        self.__steps_done = 0
 
         #list of tuples of state, action, reward+1, state+1
-        self.__replay_mem = ReplayMemory()
+        self.__replay_mem = ReplayMemory(10)
         self.__last_exp = Experience()
 
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.001
+        self.__exploration_decay_rate = 0.1
 
         self.__learning_rate = 0.1
         self.__discount_rate = 0.99
@@ -72,11 +83,15 @@ class ReinforcedStrat(Strategy):
         exploration_rate_threshold = random.uniform(0,1)
         
         if exploration_rate_threshold > self.__exploration_rate:
-            #choose best action by running through TN
-            #TODO Implement Exploitation
-            pass
+            with torch.no_grad():
+                #test = self.__policy_network(self.__replay_mem.memory(-1)).max(1)[1].view(1,1) 
+                current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
+                tensor = torch.tensor(current_state)
+                self._ReinforcedStrat__policy_network(tensor)
         else:
             up_switch = random.randint(0,1)
+
+        self.__exploration_rate -= self.__exploration_decay_rate 
 
         if up_switch:
             self.__last_exp.a = "UP"
