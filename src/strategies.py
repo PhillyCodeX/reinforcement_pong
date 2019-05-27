@@ -1,6 +1,7 @@
 import abc
 import random
 from copy import copy
+from src.rl_objects import ReplayMemory, Experience, DQN
 
 class Strategy(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -55,13 +56,8 @@ class ReinforcedStrat(Strategy):
         self.__target_network = None
 
         #list of tuples of state, action, reward+1, state+1
-        self.__replay_mem = list()
-        self.__n_of_mem = 6
-
-        self.__s = None
-        self.__a = None
-        self.__r_1 = None
-        self.__s_1 = None
+        self.__replay_mem = ReplayMemory()
+        self.__last_exp = Experience()
 
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
@@ -77,45 +73,42 @@ class ReinforcedStrat(Strategy):
         
         if exploration_rate_threshold > self.__exploration_rate:
             #choose best action by running through TN
+            #TODO Implement Exploitation
             pass
         else:
             up_switch = random.randint(0,1)
 
         if up_switch:
-            self.__a = "UP"
+            self.__last_exp.a = "UP"
             p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
         else:
-            self.__a = "DOWN"
+            self.__last_exp.a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
         
         
     def notify_score(self, p_score):
         if p_score == 1:
-            self.__r_1 = p_score
+            self.__last_exp.r_1 = p_score
         elif p_score == 0:
-            self.__r_1 = -1
+            self.__last_exp.r_1 = -1
 
     def new_state(self, p_state, p_is_first_state=False):
         if p_is_first_state:
-            self.__s = p_state
+            self.__last_exp.s = p_state
         else:
-            self.__s_1 = p_state
-            s_copy = copy(self.__s)
-            a_copy = copy(self.__a)
+            self.__last_exp.s_1 = p_state
 
-            if self.__r_1 == None:
-                r_1_copy = 0
+            if self.__last_exp.r_1 == None:
+                self.__last_exp.r_1 = 0
             else:
-                r_1_copy = copy(self.__r_1)
-                
-            s_1_copy = copy(self.__s_1)
+                self.__last_exp.r_1 = copy(self.__last_exp.r_1)
 
-            new_tuple = (s_copy, a_copy, r_1_copy, s_1_copy)
+            self.__last_exp.a = copy(self.__last_exp.a)
 
-            self.__replay_mem.append(new_tuple)
+            self.__replay_mem.push(copy(self.__last_exp))
 
-            if len(self.__replay_mem)>self.__n_of_mem:
-                self.__replay_mem.pop(0)
-
-            self.__s = p_state
-            self.__s_1 = None
+            #Reset for next State
+            self.__last_exp.s = p_state
+            self.__last_exp.s_1 = None
+            self.__last_exp.r_1 = None
+            self.__last_exp.a = None
