@@ -55,7 +55,7 @@ class Paddle(object):
     velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
-    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=10):
+    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=25):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
         self.__y_pos = p_y_pos
@@ -103,7 +103,7 @@ class Ball(object):
     y_dir = property(__gety_dir, __sety_dir)
 
 class Area(object):
-    def __init__(self, p_height=720, p_width=1280):
+    def __init__(self, p_height=360, p_width=640):
         self.__height = p_height
         self.__width = p_width
 
