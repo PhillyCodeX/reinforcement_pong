@@ -82,8 +82,10 @@ class ReinforcedStrat(Strategy):
             up_switch = random.randint(0,1)
 
         if up_switch:
+            self.__a = "UP"
             p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
         else:
+            self.__a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
         
         
@@ -100,7 +102,12 @@ class ReinforcedStrat(Strategy):
             self.__s_1 = p_state
             s_copy = copy(self.__s)
             a_copy = copy(self.__a)
-            r_1_copy = copy(self.__r_1)
+
+            if self.__r_1 == None:
+                r_1_copy = 0
+            else:
+                r_1_copy = copy(self.__r_1)
+                
             s_1_copy = copy(self.__s_1)
 
             new_tuple = (s_copy, a_copy, r_1_copy, s_1_copy)

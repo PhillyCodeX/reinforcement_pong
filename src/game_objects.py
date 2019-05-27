@@ -360,8 +360,10 @@ class Game(object):
         if len(self.__last_states) > self.__n_of_images:
             self.__last_states.pop(0)
             self.player1.strategy.new_state(self.__last_states)
+            self.player2.strategy.new_state(self.__last_states)
         elif len(self.__last_states) == self.__n_of_images:
             self.player1.strategy.new_state(self.__last_states, p_is_first_state = True)
+            self.player2.strategy.new_state(self.__last_states, p_is_first_state = True)
     
     def __getn_of_images(self):
         return self.__n_of_images
