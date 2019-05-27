@@ -2,6 +2,7 @@ import abc
 import random
 from copy import copy
 from src.rl_objects import ReplayMemory, Experience, DQN
+import numpy as np
 
 import torch
 import torch.optim as optim
@@ -57,8 +58,8 @@ class ReinforcedStrat(Strategy):
     def __init__(self):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        self.__policy_network = DQN(370, 720, 2).to(device)
-        self.__target_network = DQN(370, 720, 2).to(device)
+        self.__policy_network = DQN(360, 640, 2).to(device).double()
+        self.__target_network = DQN(360, 640, 2).to(device).double()
         self.__target_network.load_state_dict(self.__policy_network.state_dict())
         self.__target_network.eval()
 
@@ -81,13 +82,15 @@ class ReinforcedStrat(Strategy):
     
     def next_pos(self, p_paddle, p_dir_up):
         exploration_rate_threshold = random.uniform(0,1)
-        
+        up_switch = True
+
         if exploration_rate_threshold > self.__exploration_rate:
             with torch.no_grad():
                 #test = self.__policy_network(self.__replay_mem.memory(-1)).max(1)[1].view(1,1) 
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
                 tensor = torch.tensor(current_state)
-                self._ReinforcedStrat__policy_network(tensor)
+                tensor = tensor.type('torch.DoubleTensor')
+                up_switch = torch.max(self._ReinforcedStrat__policy_network(tensor.permute(0,3,2,1)),0)[0].argmin().item()
         else:
             up_switch = random.randint(0,1)
 
