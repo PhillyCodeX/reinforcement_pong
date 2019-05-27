@@ -105,7 +105,7 @@ class ReinforcedStrat(Strategy):
 
             self.__last_exp.a = copy(self.__last_exp.a)
 
-            self.__replay_mem.push(copy(self.__last_exp))
+            self.__replay_mem.enqueue(copy(self.__last_exp))
 
             #Reset for next State
             self.__last_exp.s = p_state
