@@ -90,7 +90,7 @@ class ReinforcedStrat(Strategy):
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
                 tensor = torch.tensor(current_state)
                 tensor = tensor.type('torch.DoubleTensor')
-                up_switch = torch.max(self._ReinforcedStrat__policy_network(tensor.permute(0,3,2,1)),0)[0].argmin().item()
+                up_switch = torch.max(self._ReinforcedStrat__policy_network(tensor.unsqueeze(1)),0)[0].argmin().item()
         else:
             up_switch = random.randint(0,1)
 
