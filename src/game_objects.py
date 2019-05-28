@@ -335,7 +335,7 @@ class Game(object):
             pygame.display.flip()
 
             surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
-            self.cur_rgb_matrix = surface_array
+            self.cur_matrix = surface_array
 
 
     def __setarea(self, p_area):
@@ -350,10 +350,10 @@ class Game(object):
     def __getwinner(self):
         return self.__winner
 
-    def __getcur_rgb_matrix(self):
+    def __getcur_matrix(self):
         return self.__cur_rgb_matrix
 
-    def __setcur_rgb_matrix(self, p_matrix):
+    def __setcur_matrix(self, p_matrix):
         self.__cur_rgb_matrix = p_matrix
         self.__last_states.append(self.__cur_rgb_matrix)
 
@@ -373,5 +373,5 @@ class Game(object):
 
     area = property(__getarea, __setarea)
     winner = property(__getwinner, __setwinner)
-    cur_rgb_matrix = property(__getcur_rgb_matrix, __setcur_rgb_matrix)
+    cur_matrix = property(__getcur_matrix, __setcur_matrix)
     n_of_images = property(__getn_of_images, __setn_of_images)
