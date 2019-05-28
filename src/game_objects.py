@@ -334,7 +334,7 @@ class Game(object):
 
             pygame.display.flip()
 
-            surface_array = pygame.surfarray.array3d(pygame.display.get_surface())
+            surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
             self.cur_rgb_matrix = surface_array
 
 
