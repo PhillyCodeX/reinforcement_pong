@@ -111,8 +111,9 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.r_1 = -1
 
     def new_state(self, p_state, p_is_first_state=False):
-        np_img = np.ascontiguousarray(p_state, dtype=np.float32) / 16777215
-        processed_state = torch.from_numpy(np_img)
+        np_img = np.ascontiguousarray(p_state, dtype=np.float32) 
+        np_normalized = np_img / np.amax(np_img)
+        processed_state = torch.from_numpy(np_normalized)
 
         if p_is_first_state:
             self.__last_exp.s = processed_state
