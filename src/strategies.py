@@ -49,6 +49,20 @@ class DumbStrat(Strategy):
         else:
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
+class RandomStrat(Strategy):
+    def __init__(self):
+        self.__up_switch = True
+
+    def next_pos(self, p_paddle, p_dir_up):
+
+        up_switch = random.randint(0,1)
+
+        if self.__up_switch and p_paddle.up_moveable:
+            p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
+        elif self.__up_switch == False and p_paddle.down_moveable:
+            p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
+
+
 class ManualStrat(Strategy):
 
     def next_pos(self, p_paddle, p_dir_up):
@@ -82,7 +96,7 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
-        self.__TARGET_THRESHOLD = 10
+        self.__TARGET_THRESHOLD = 100
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = ReplayMemory(10)
@@ -133,7 +147,8 @@ class ReinforcedStrat(Strategy):
         q_value = self._ReinforcedStrat__policy_network(exp_s)
         q_value_target = self._ReinforcedStrat__target_network(exp_s_1)
 
-        loss = F.smooth_l1_loss(q_value, q_value_target.unsqueeze(1))
+        loss = F.smooth_l1_loss(q_value, q_value_target)
+
         print("LOSS: ", loss)
 
         self.__optimizer.zero_grad()

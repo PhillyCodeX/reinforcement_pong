@@ -1,4 +1,4 @@
-from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
+from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat
 import numpy as np
 import pygame 
 import pygame.surfarray
@@ -235,7 +235,7 @@ class Game(object):
         self.__player1 = None
         self.__player2 = None
         self.__winner = None
-        self.__winning_score = 10
+        self.__winning_score = 100
 
         self.__cur_rgb_matrix = None
         self.__last_states = list()
@@ -252,8 +252,10 @@ class Game(object):
             strategy = DumbStrat()
         elif chosen_strategy == 'rl':
             strategy = ReinforcedStrat(self.__area.width,self.__area.height)
+        elif chosen_strategy == 'random':
+            strategy = RandomStrat()
         else:
-            strategy = DumbStrat()
+            strategy = RandomStrat()
         
         player = Player(name,strategy)
         
