@@ -64,11 +64,11 @@ class ReinforcedStrat(Strategy):
         self.__resize_factor = 40
 
         if p_width > p_height:
-            adapted_width = p_width / p_height * self.__resize_factor 
+            adapted_width = 4*p_width / p_height * self.__resize_factor 
             adapter_heigth = self.__resize_factor
         else:
             adapted_width = self.__resize_factor
-            adapter_heigth = p_height / p_width * self.__resize_factor 
+            adapter_heigth = p_height / 4*p_width * self.__resize_factor 
 
         self.__width = int(adapted_width)
         self.__heigth = int(adapter_heigth)
@@ -101,7 +101,6 @@ class ReinforcedStrat(Strategy):
         
         if exploration_rate_threshold > self.__exploration_rate and self.__replay_mem.memory:
             with torch.no_grad():
-                #test = self.__policy_network(self.__replay_mem.memory(-1)).max(1)[1].view(1,1) 
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
                 up_switch = torch.max(self._ReinforcedStrat__policy_network(current_state),0)[0].argmin().item()
         else:
@@ -115,8 +114,18 @@ class ReinforcedStrat(Strategy):
         elif up_switch == False and p_paddle.down_moveable:
             self.__last_exp.a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
-        
-        
+
+        #self.__optimize()    
+    
+    def __optimize(self):
+        experience = self.__replay_mem.memory.sample(1)
+        exp_s = experience.s
+        exp_s_1 = experience.s_1
+        self._ReinforcedStrat__policy_network(exp_s)
+        self._ReinforcedStrat__target_network(exp_s_1)
+
+        pass
+
     def notify_score(self, p_score):
         if p_score == 1:
             self.__last_exp.r_1 = p_score
@@ -126,7 +135,9 @@ class ReinforcedStrat(Strategy):
     def __img_processing(self, p_img_matrix):
         np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32) 
         np_normalized = np_img / np.amax(np_img)
-        processed_state = torch.from_numpy(np_normalized)
+        np_stacked_state = np.vstack((np_normalized[0],np_normalized[1],np_normalized[2],np_normalized[3]))
+
+        processed_state = torch.from_numpy(np_stacked_state)
 
         resize = T.Compose([T.ToPILImage(),
                     T.Resize(40, interpolation=Image.CUBIC),
