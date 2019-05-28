@@ -56,7 +56,7 @@ class Paddle(object):
     velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
-    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=10):
+    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=20):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
         self.__y_pos = p_y_pos
@@ -250,7 +250,7 @@ class Game(object):
         elif chosen_strategy == 'dumb':
             strategy = DumbStrat()
         elif chosen_strategy == 'rl':
-            strategy = ReinforcedStrat()
+            strategy = ReinforcedStrat(self.__area.width,self.__area.height)
         else:
             strategy = DumbStrat()
         

@@ -1,11 +1,14 @@
 import abc
 import random
+import numpy as np
+
 from copy import copy
 from src.rl_objects import ReplayMemory, Experience, DQN
-import numpy as np
+from PIL import Image
 
 import torch
 import torch.optim as optim
+import torchvision.transforms as T
 
 class Strategy(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -55,11 +58,23 @@ class ManualStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class ReinforcedStrat(Strategy):
-    def __init__(self):
+    def __init__(self, p_width, p_height):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        self.__policy_network = DQN(360, 640, 2).to(device).double()
-        self.__target_network = DQN(360, 640, 2).to(device).double()
+        self.__resize_factor = 40
+
+        if p_width > p_height:
+            adapted_width = p_width / p_height * self.__resize_factor 
+            adapter_heigth = self.__resize_factor
+        else:
+            adapted_width = self.__resize_factor
+            adapter_heigth = p_height / p_width * self.__resize_factor 
+
+        self.__width = int(adapted_width)
+        self.__heigth = int(adapter_heigth)
+
+        self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+        self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
         self.__target_network.load_state_dict(self.__policy_network.state_dict())
         self.__target_network.eval()
 
@@ -88,9 +103,7 @@ class ReinforcedStrat(Strategy):
             with torch.no_grad():
                 #test = self.__policy_network(self.__replay_mem.memory(-1)).max(1)[1].view(1,1) 
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
-                tensor = torch.tensor(current_state)
-                tensor = tensor.type('torch.DoubleTensor')
-                up_switch = torch.max(self._ReinforcedStrat__policy_network(tensor.unsqueeze(1)),0)[0].argmin().item()
+                up_switch = torch.max(self._ReinforcedStrat__policy_network(current_state),0)[0].argmin().item()
         else:
             up_switch = random.randint(0,1)
 
@@ -110,10 +123,20 @@ class ReinforcedStrat(Strategy):
         elif p_score == 0:
             self.__last_exp.r_1 = -1
 
-    def new_state(self, p_state, p_is_first_state=False):
-        np_img = np.ascontiguousarray(p_state, dtype=np.float32) 
+    def __img_processing(self, p_img_matrix):
+        np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32) 
         np_normalized = np_img / np.amax(np_img)
         processed_state = torch.from_numpy(np_normalized)
+
+        resize = T.Compose([T.ToPILImage(),
+                    T.Resize(40, interpolation=Image.CUBIC),
+                    T.ToTensor()])
+
+        return resize(processed_state).type('torch.DoubleTensor').unsqueeze(1)
+
+    def new_state(self, p_state, p_is_first_state=False):
+        
+        processed_state = self.__img_processing(p_state)
 
         if p_is_first_state:
             self.__last_exp.s = processed_state
