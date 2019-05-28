@@ -83,8 +83,8 @@ class ReinforcedStrat(Strategy):
     def next_pos(self, p_paddle, p_dir_up):
         exploration_rate_threshold = random.uniform(0,1)
         up_switch = True
-
-        if exploration_rate_threshold > self.__exploration_rate:
+        
+        if exploration_rate_threshold > self.__exploration_rate and self.__replay_mem.memory:
             with torch.no_grad():
                 #test = self.__policy_network(self.__replay_mem.memory(-1)).max(1)[1].view(1,1) 
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
