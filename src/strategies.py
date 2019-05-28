@@ -9,6 +9,7 @@ from PIL import Image
 import torch
 import torch.optim as optim
 import torchvision.transforms as T
+import torch.nn.functional as F
 
 class Strategy(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -115,16 +116,27 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
-        #self.__optimize()    
+        if self.__replay_mem.memory:
+            self.__optimize()    
     
     def __optimize(self):
-        experience = self.__replay_mem.memory.sample(1)
+        experience = random.choice(self.__replay_mem.memory)
         exp_s = experience.s
         exp_s_1 = experience.s_1
-        self._ReinforcedStrat__policy_network(exp_s)
-        self._ReinforcedStrat__target_network(exp_s_1)
+        
+        q_value = self._ReinforcedStrat__policy_network(exp_s)
+        q_value_target = self._ReinforcedStrat__target_network(exp_s_1)
 
-        pass
+        loss = q_value_target - q_value
+        loss = F.smooth_l1_loss(q_value, q_value_target.unsqueeze(1))
+
+        self.__optimizer.zero_grad()
+
+        loss.backward()
+        for param in self._ReinforcedStrat__policy_network.parameters():
+            param.grad.data.clamp_(-1, 1)
+
+        self.__optimizer.step()
 
     def notify_score(self, p_score):
         if p_score == 1:
