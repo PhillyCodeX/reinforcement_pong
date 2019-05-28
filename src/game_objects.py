@@ -235,6 +235,7 @@ class Game(object):
         self.__player1 = None
         self.__player2 = None
         self.__winner = None
+        self.__winning_score = 10
 
         self.__cur_rgb_matrix = None
         self.__last_states = list()
@@ -315,10 +316,10 @@ class Game(object):
                 self.player1.strategy.notify_score(0)
                 self.player2.strategy.notify_score(1)
 
-            if self.player1.points == 10:
+            if self.player1.points == self.winning_score:
                 self.winner = self.player1
                 return
-            elif self.player2.points == 10:
+            elif self.player2.points == self.winning_score:
                 self.winner = self.player2
                 return
 
@@ -371,7 +372,14 @@ class Game(object):
     def __setn_of_images(self, p_n):
         self.__n_of_images = p_n
 
+    def __getwinning_score(self):
+        return self.__winning_score
+
+    def __setwinning_score(self, p_int):
+        self.__winning_score = p_int
+
     area = property(__getarea, __setarea)
     winner = property(__getwinner, __setwinner)
     cur_matrix = property(__getcur_matrix, __setcur_matrix)
     n_of_images = property(__getn_of_images, __setn_of_images)
+    winning_score = property(__getwinning_score, __setwinning_score)
