@@ -255,7 +255,7 @@ class Game(object):
         elif chosen_strategy == 'random':
             strategy = RandomStrat()
         else:
-            strategy = RandomStrat()
+            strategy = DumbStrat()
         
         player = Player(name,strategy)
         

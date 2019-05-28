@@ -96,18 +96,18 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
-        self.__TARGET_THRESHOLD = 100
+        self.__TARGET_THRESHOLD = 1000
 
         #list of tuples of state, action, reward+1, state+1
-        self.__replay_mem = ReplayMemory(10)
+        self.__replay_mem = ReplayMemory(1000)
         self.__last_exp = Experience()
 
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
-        self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.1
+        self.__min_exploration_rate = 0.001
+        self.__exploration_decay_rate = 0.001
 
-        self.__learning_rate = 0.1
+        self.__learning_rate = 0.0001
         self.__discount_rate = 0.99
 
     
@@ -122,8 +122,6 @@ class ReinforcedStrat(Strategy):
         else:
             up_switch = random.randint(0,1)
 
-        self.__exploration_rate -= self.__exploration_decay_rate 
-
         if up_switch and p_paddle.up_moveable:
             self.__last_exp.a = "UP"
             p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
@@ -135,8 +133,13 @@ class ReinforcedStrat(Strategy):
             self.__optimize()    
             self.__steps_done += 1
 
-            if self.__steps_done >= self.__TARGET_THRESHOLD:
-                self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
+            if self.__steps_done >= self.__TARGET_THRESHOLD//3:
+                self.__exploration_rate -= self.__exploration_decay_rate 
+
+                if self.__steps_done >= self.__TARGET_THRESHOLD:
+                    self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
+                    self.steps_done = 0
+
 
     
     def __optimize(self):
