@@ -1,4 +1,5 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat
+import numpy as np
 import pygame 
 import pygame.surfarray
 
@@ -336,7 +337,6 @@ class Game(object):
 
             surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
             self.cur_matrix = surface_array
-
 
     def __setarea(self, p_area):
         self.__area = p_area

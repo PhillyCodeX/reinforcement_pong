@@ -111,10 +111,13 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.r_1 = -1
 
     def new_state(self, p_state, p_is_first_state=False):
+        np_img = np.ascontiguousarray(p_state, dtype=np.float32) / 16777215
+        processed_state = torch.from_numpy(np_img)
+
         if p_is_first_state:
-            self.__last_exp.s = p_state
+            self.__last_exp.s = processed_state
         else:
-            self.__last_exp.s_1 = p_state
+            self.__last_exp.s_1 = processed_state
 
             if self.__last_exp.r_1 == None:
                 self.__last_exp.r_1 = 0
@@ -126,7 +129,7 @@ class ReinforcedStrat(Strategy):
             self.__replay_mem.enqueue(copy(self.__last_exp))
 
             #Reset for next State
-            self.__last_exp.s = p_state
+            self.__last_exp.s = processed_state
             self.__last_exp.s_1 = None
             self.__last_exp.r_1 = None
             self.__last_exp.a = None
