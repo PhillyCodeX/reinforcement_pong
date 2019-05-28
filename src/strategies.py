@@ -109,10 +109,10 @@ class ReinforcedStrat(Strategy):
 
         self.__exploration_rate -= self.__exploration_decay_rate 
 
-        if up_switch:
+        if up_switch and p_paddle.up_moveable:
             self.__last_exp.a = "UP"
             p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
-        else:
+        elif up_switch == False and p_paddle.down_moveable:
             self.__last_exp.a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
         
