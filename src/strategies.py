@@ -82,6 +82,7 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
+        self.__TARGET_THRESHOLD = 10
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = ReplayMemory(10)
@@ -118,6 +119,11 @@ class ReinforcedStrat(Strategy):
 
         if self.__replay_mem.memory:
             self.__optimize()    
+            self.__steps_done += 1
+
+            if self.__steps_done >= self.__TARGET_THRESHOLD:
+                self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
+
     
     def __optimize(self):
         experience = random.choice(self.__replay_mem.memory)
@@ -127,8 +133,8 @@ class ReinforcedStrat(Strategy):
         q_value = self._ReinforcedStrat__policy_network(exp_s)
         q_value_target = self._ReinforcedStrat__target_network(exp_s_1)
 
-        loss = q_value_target - q_value
         loss = F.smooth_l1_loss(q_value, q_value_target.unsqueeze(1))
+        print("LOSS: ", loss)
 
         self.__optimizer.zero_grad()
 
