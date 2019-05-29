@@ -235,37 +235,42 @@ class Game(object):
         self.__player1 = None
         self.__player2 = None
         self.__winner = None
-        self.__winning_score = 100
+        self.__winning_score = 10
 
         self.__cur_rgb_matrix = None
         self.__last_states = list()
         self.__n_of_images = 4
 
-    def newPlayer(self):
-        name = input("Enter your name: ")
-        
-        chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
-        
-        if chosen_strategy == 'manual':
-            strategy = ManualStrat()
-        elif chosen_strategy == 'dumb':
-            strategy = DumbStrat()
-        elif chosen_strategy == 'rl':
+    def newPlayer(self, p_train_mode = False):
+
+        if p_train_mode:
+            name = "Miles Davis"
             strategy = ReinforcedStrat(self.__area.width,self.__area.height)
-        elif chosen_strategy == 'random':
-            strategy = RandomStrat()
         else:
-            strategy = DumbStrat()
+            name = input("Enter your name: ")
+            
+            chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
+            
+            if chosen_strategy == 'manual':
+                strategy = ManualStrat()
+            elif chosen_strategy == 'dumb':
+                strategy = DumbStrat()
+            elif chosen_strategy == 'rl':
+                strategy = ReinforcedStrat(self.__area.width,self.__area.height)
+            elif chosen_strategy == 'random':
+                strategy = RandomStrat()
+            else:
+                strategy = DumbStrat()
         
         player = Player(name,strategy)
         
         return player
 
-    def setPlayers(self):
-        self.player1 = self.newPlayer()
+    def setPlayers(self, p_train_mode = False):
+        self.player1 = self.newPlayer(p_train_mode)
         self.player1.paddle = self.__area.paddle1
 
-        self.player2 = self.newPlayer()
+        self.player2 = self.newPlayer(p_train_mode)
         self.player2.paddle = self.__area.paddle2 
 
     def play(self):

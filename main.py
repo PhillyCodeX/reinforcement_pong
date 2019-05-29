@@ -1,7 +1,17 @@
 import src.game_objects as go
 import src.strategies as strat
 
-def main():
+TRAIN_MODE = True
+
+def train(p_nepisodes):
+    for i in range(p_nepisodes):
+        new_game = go.Game()
+        new_game.setPlayers(TRAIN_MODE)
+        new_game.play()
+        new_game.player1.points = 0
+        new_game.player2.points = 0
+
+def normal():
     want_new_players = True
     want_new_game = True
     new_game = go.Game()
@@ -35,6 +45,12 @@ def main():
             elif user_input == "No":
                 new_game.player1.points = 0
                 new_game.player2.points = 0
+
+def main():
+    if TRAIN_MODE:
+        train(20)
+    else:
+        normal()
     
 
 if __name__ == '__main__': 
