@@ -110,6 +110,9 @@ class ReinforcedStrat(Strategy):
         self.__learning_rate = 0.0001
         self.__discount_rate = 0.99
 
+        self.__avg_loss = 0
+        self.__loss_list = np.empty([100])
+
     
     def next_pos(self, p_paddle, p_dir_up):
         exploration_rate_threshold = random.uniform(0,1)
@@ -141,6 +144,10 @@ class ReinforcedStrat(Strategy):
                     self.steps_done = 0
 
 
+    def __update_loss(self, p_loss):
+        np.append(self.__loss_list, p_loss.item())
+        self.__avg_loss = np.median(self.__loss_list)
+
     
     def __optimize(self):
         experience = random.choice(self.__replay_mem.memory)
@@ -151,8 +158,7 @@ class ReinforcedStrat(Strategy):
         q_value_target = self._ReinforcedStrat__target_network(exp_s_1)
 
         loss = F.smooth_l1_loss(q_value, q_value_target)
-
-        print("LOSS: ", loss)
+        self.__update_loss(loss)
 
         self.__optimizer.zero_grad()
 
@@ -204,3 +210,8 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.s_1 = None
             self.__last_exp.r_1 = None
             self.__last_exp.a = None
+
+    def __getavg_loss(self):
+        return self.__avg_loss
+
+    avg_loss = property(__getavg_loss)

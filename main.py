@@ -8,6 +8,12 @@ def train(p_nepisodes):
         new_game = go.Game()
         new_game.setPlayers(TRAIN_MODE)
         new_game.play()
+
+        loss1 = new_game.player1.strategy.avg_loss
+        loss2 = new_game.player2.strategy.avg_loss
+        print("Player1 - AVG Loss - ", loss1)
+        print("Player2 - AVG Loss - ", loss2)
+
         new_game.player1.points = 0
         new_game.player2.points = 0
 
@@ -48,7 +54,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(20)
+        train(3)
     else:
         normal()
     
