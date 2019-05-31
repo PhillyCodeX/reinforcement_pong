@@ -164,9 +164,10 @@ class ReinforcedStrat(Strategy):
         experience = random.choice(self.__replay_mem.memory)
         exp_s = experience.s
         exp_s_1 = experience.s_1
-        
+        exp_r_1 = experience.r_1
+
         q_value = self._ReinforcedStrat__policy_network(exp_s)
-        q_value_target = self._ReinforcedStrat__target_network(exp_s_1)
+        q_value_target = exp_r_1 + self.__discount_rate * self._ReinforcedStrat__target_network(exp_s_1).max(1)[0].detach()
 
         loss = F.smooth_l1_loss(q_value, q_value_target)
         self.__update_loss(loss)
