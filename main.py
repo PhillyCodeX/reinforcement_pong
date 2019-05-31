@@ -54,7 +54,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(3)
+        train(100)
     else:
         normal()
     

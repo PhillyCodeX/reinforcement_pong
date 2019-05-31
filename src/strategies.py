@@ -169,10 +169,10 @@ class ReinforcedStrat(Strategy):
         self.__optimizer.step()
 
     def notify_score(self, p_score):
-        if p_score == 1:
-            self.__last_exp.r_1 = p_score
-        elif p_score == 0:
+        if p_score == 0:
             self.__last_exp.r_1 = -1
+        else:
+            self.__last_exp.r_1 = p_score
 
     def __img_processing(self, p_img_matrix):
         np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32) 
