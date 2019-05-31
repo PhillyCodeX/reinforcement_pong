@@ -5,15 +5,23 @@ TRAIN_MODE = True
 
 def train(p_nepisodes):
     for i in range(p_nepisodes):
+        print('******** Game ', i, '********')
         new_game = go.Game()
         new_game.setPlayers(TRAIN_MODE)
         new_game.play()
 
         loss1 = new_game.player1.strategy.avg_loss
         loss2 = new_game.player2.strategy.avg_loss
-        print("Player1 - AVG Loss - ", loss1)
-        print("Player2 - AVG Loss - ", loss2)
+        reward1 = new_game.player1.strategy.sum_reward
+        reward2 = new_game.player2.strategy.sum_reward
 
+        print("Player1 - AVG Loss - ", loss1)
+        print("Player1 - SUM Reward ", reward1)
+        print("\n")
+        print("Player2 - AVG Loss - ", loss2)
+        print("Player2 - SUM Reward ", reward2)
+        print("*********************")
+        
         new_game.player1.points = 0
         new_game.player2.points = 0
 

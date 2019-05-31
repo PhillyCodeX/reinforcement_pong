@@ -1,6 +1,7 @@
 import abc
 import random
 import numpy as np
+np.seterr(invalid='ignore')
 
 from copy import copy
 from src.rl_objects import ReplayMemory, Experience, DQN
@@ -111,7 +112,10 @@ class ReinforcedStrat(Strategy):
         self.__discount_rate = 0.99
 
         self.__avg_loss = 0
-        self.__loss_list = np.empty([100])
+        self.__loss_list = np.zeros([1])
+
+        self.__sum_reward = 0
+        self.__reward_list = np.zeros([1])
 
     
     def next_pos(self, p_paddle, p_dir_up):
@@ -145,7 +149,7 @@ class ReinforcedStrat(Strategy):
 
 
     def __update_loss(self, p_loss):
-        np.append(self.__loss_list, p_loss.item())
+        self.__loss_list = np.append(self.__loss_list, p_loss.item())
         self.__avg_loss = np.median(self.__loss_list)
 
     
@@ -171,8 +175,12 @@ class ReinforcedStrat(Strategy):
     def notify_score(self, p_score):
         if p_score == 0:
             self.__last_exp.r_1 = -1
+            self.__reward_list = np.append(self.__reward_list, -1)
         else:
             self.__last_exp.r_1 = p_score
+            self.__reward_list = np.append(self.__reward_list, p_score)
+
+        self.__sum_reward = np.sum(self.__reward_list)
 
     def __img_processing(self, p_img_matrix):
         np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32) 
@@ -214,7 +222,11 @@ class ReinforcedStrat(Strategy):
     def __getavg_loss(self):
         return self.__avg_loss
 
+    def __getsum_reward(self):
+        return self.__sum_reward 
+
     avg_loss = property(__getavg_loss)
+    sum_reward = property(__getsum_reward)
     
 class GodStrat(Strategy):
 
