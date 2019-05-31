@@ -1,5 +1,6 @@
 import abc
 import random
+import pickle
 import numpy as np
 np.seterr(invalid='ignore')
 
@@ -74,7 +75,7 @@ class ManualStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class ReinforcedStrat(Strategy):
-    def __init__(self, p_width, p_height):
+    def __init__(self, p_width, p_height, p_name, p_resume=False ):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.__resize_factor = 40
@@ -89,8 +90,13 @@ class ReinforcedStrat(Strategy):
         self.__width = int(adapted_width)
         self.__heigth = int(adapter_heigth)
 
-        self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
-        self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+        if p_resume:
+            self.__policy_network = pickle.load(open('models/'+p_name+'_save_pn.p', 'rb'))
+            self.__target_network = pickle.load(open('models/'+p_name+'_save_tn.p', 'rb'))
+        else:
+            self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+            self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+
         self.__target_network.load_state_dict(self.__policy_network.state_dict())
         self.__target_network.eval()
 
@@ -106,9 +112,9 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.001
+        self.__exploration_decay_rate = 0.0001
 
-        self.__learning_rate = 0.001
+        self.__learning_rate = 1e-3
         self.__discount_rate = 0.999
 
         self.__avg_loss = 0
@@ -117,7 +123,10 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = 0
         self.__reward_list = np.zeros([1])
 
-    
+    def safe_model(self, p_name):
+        pickle.dump(self.__policy_network, open('models/'+p_name+'_save_pn.p', 'wb'))
+        pickle.dump(self.__target_network, open('models/'+p_name+'_save_tn.p', 'wb'))
+
     def next_pos(self, p_paddle, p_dir_up):
         exploration_rate_threshold = random.uniform(0,1)
         up_switch = True
