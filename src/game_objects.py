@@ -1,5 +1,9 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat
 import numpy as np
+
+import os
+os.environ['SDL_AUDIODRIVER'] = 'dsp'
+
 import pygame 
 import pygame.surfarray
 
