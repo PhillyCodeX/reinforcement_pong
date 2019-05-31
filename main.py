@@ -22,6 +22,8 @@ def train(p_nepisodes):
         print("Player2 - SUM Reward ", reward2)
         print("*********************")
         
+        new_game.player1.strategy.reset()
+        new_game.player2.strategy.reset()
         new_game.player1.points = 0
         new_game.player2.points = 0
 
