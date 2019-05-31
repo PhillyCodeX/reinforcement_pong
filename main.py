@@ -42,7 +42,7 @@ def train(p_nepisodes):
         new_game.player1.points = 0
         new_game.player2.points = 0
 
-        if i % 2 == 0:
+        if i % 100 == 0:
             new_game.player1.strategy.safe_model('p1')
             new_game.player2.strategy.safe_model('p2')
 
