@@ -201,3 +201,8 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.s_1 = None
             self.__last_exp.r_1 = None
             self.__last_exp.a = None
+
+class GodStrat(Strategy):
+
+    def next_pos(self, p_paddle, p_dir_up):
+        return

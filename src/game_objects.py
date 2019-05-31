@@ -1,4 +1,4 @@
-from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat
+from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat
 import numpy as np
 import pygame 
 import pygame.surfarray
@@ -131,10 +131,10 @@ class Area(object):
             self.ball.y_dir = -self.ball.y_dir
         
         if self.ball.x_pos > self.paddle2.x_pos:
-            if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
+            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
                 self.ball.x_dir = -self.ball.x_dir
         elif self.ball.x_pos < self.paddle1.x_pos:
-            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
+            if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
                 self.ball.x_dir = -self.ball.x_dir
 
         score_for = 0
@@ -244,7 +244,7 @@ class Game(object):
     def newPlayer(self):
         name = input("Enter your name: ")
         
-        chosen_strategy = input("What's your strategy?[manual|dumb|rl] :")
+        chosen_strategy = input("What's your strategy?[manual|dumb|rl|god] :")
         
         if chosen_strategy == 'manual':
             strategy = ManualStrat()
@@ -254,6 +254,8 @@ class Game(object):
             strategy = ReinforcedStrat(self.__area.width,self.__area.height)
         elif chosen_strategy == 'random':
             strategy = RandomStrat()
+        elif chosen_strategy == 'god':
+            strategy = GodStrat()
         else:
             strategy = RandomStrat()
         
@@ -265,8 +267,16 @@ class Game(object):
         self.player1 = self.newPlayer()
         self.player1.paddle = self.__area.paddle1
 
+        if self.player1.strategy.__class__.__name__ == 'GodStrat':
+            self.player1.paddle.y_pos = 0
+            self.player1.paddle.length = self.area.height
+
         self.player2 = self.newPlayer()
-        self.player2.paddle = self.__area.paddle2 
+        self.player2.paddle = self.__area.paddle2
+
+        if self.player2.strategy.__class__.__name__ == 'GodStrat':
+            self.player2.paddle.y_pos = 0
+            self.player2.paddle.length = self.area.height
 
     def play(self):
         pygame.init()
