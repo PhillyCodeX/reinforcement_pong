@@ -115,7 +115,7 @@ class Area(object):
         y_middle = p_height / 2
         x_middle = p_width / 2
 
-        self.__paddle1 = Paddle(y_middle,10)
+        self.__paddle1 = Paddle(y_middle,0)
         self.__paddle2 = Paddle(y_middle,p_width-10)
         self.__ball = Ball(x_middle,y_middle,5,7)
 
