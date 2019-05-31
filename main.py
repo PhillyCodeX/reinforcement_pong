@@ -8,7 +8,7 @@ TRAIN_MODE = True
 
 def train(p_nepisodes):
     for i in range(p_nepisodes):
-        logging.DEBUG('******** Game '+i+' ********')
+        logging.debug('******** Game '+str(i)+' ********')
         new_game = go.Game()
         new_game.setPlayers(TRAIN_MODE)
         new_game.play()
@@ -18,12 +18,12 @@ def train(p_nepisodes):
         reward1 = new_game.player1.strategy.sum_reward
         reward2 = new_game.player2.strategy.sum_reward
 
-        logging.DEBUG("Player1 - AVG Loss - "+loss1)
-        logging.DEBUG("Player1 - SUM Reward "+reward1)
-        logging.DEBUG("\n")
-        logging.DEBUG("Player2 - AVG Loss - "+loss2)
-        logging.DEBUG("Player2 - SUM Reward "+reward2)
-        logging.DEBUG("*********************")
+        logging.debug("Player1 - AVG Loss - "+str(loss1))
+        logging.debug("Player1 - SUM Reward "+str(reward1))
+        logging.debug("\n")
+        logging.debug("Player2 - AVG Loss - "+str(loss2))
+        logging.debug("Player2 - SUM Reward "+str(reward2))
+        logging.debug("*********************")
         
         new_game.player1.strategy.reset()
         new_game.player2.strategy.reset()
