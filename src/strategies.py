@@ -153,6 +153,13 @@ class ReinforcedStrat(Strategy):
         self.__avg_loss = np.median(self.__loss_list)
 
     
+    def reset(self):
+        self.__loss_list = list()
+        self.__reward_list = list()
+        self.__avg_loss = 0
+        self.__sum_reward = 0
+
+
     def __optimize(self):
         experience = random.choice(self.__replay_mem.memory)
         exp_s = experience.s
