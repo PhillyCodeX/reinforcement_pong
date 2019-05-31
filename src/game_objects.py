@@ -137,9 +137,11 @@ class Area(object):
         if self.ball.x_pos > self.paddle2.x_pos:
             if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
                 self.ball.x_dir = -self.ball.x_dir
+                return
         elif self.ball.x_pos < self.paddle1.x_pos:
             if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
                 self.ball.x_dir = -self.ball.x_dir
+                return
 
         score_for = 0
 
@@ -246,10 +248,10 @@ class Game(object):
         self.__n_of_images = 4
 
 
-    def newPlayer(self, p_train_mode = False):
+    def newPlayer(self,  p_name, p_train_mode = False, p_resume = False):
         if p_train_mode:
             name = "Miles Davis"
-            strategy = ReinforcedStrat(self.__area.width,self.__area.height)
+            strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
         else:
             name = input("Enter your name: ")
             
@@ -260,7 +262,7 @@ class Game(object):
             elif chosen_strategy == 'dumb':
                 strategy = DumbStrat()
             elif chosen_strategy == 'rl':
-                strategy = ReinforcedStrat(self.__area.width,self.__area.height)
+                    strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
             elif chosen_strategy == 'random':
                 strategy = RandomStrat()
             elif chosen_strategy == 'god':
@@ -272,15 +274,15 @@ class Game(object):
         
         return player
 
-    def setPlayers(self, p_train_mode = False):
-        self.player1 = self.newPlayer(p_train_mode)
+    def setPlayers(self, p_train_mode = False, p_resume = False):
+        self.player1 = self.newPlayer("p1", p_train_mode, p_resume)
         self.player1.paddle = self.__area.paddle1
 
         if self.player1.strategy.__class__.__name__ == 'GodStrat':
             self.player1.paddle.y_pos = 0
             self.player1.paddle.length = self.area.height
 
-        self.player2 = self.newPlayer(p_train_mode)
+        self.player2 = self.newPlayer("p2", p_train_mode, p_resume)
         self.player2.paddle = self.__area.paddle2
 
         if self.player2.strategy.__class__.__name__ == 'GodStrat':
