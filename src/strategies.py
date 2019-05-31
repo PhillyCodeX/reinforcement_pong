@@ -215,3 +215,8 @@ class ReinforcedStrat(Strategy):
         return self.__avg_loss
 
     avg_loss = property(__getavg_loss)
+    
+class GodStrat(Strategy):
+
+    def next_pos(self, p_paddle, p_dir_up):
+        return
