@@ -105,11 +105,11 @@ class ReinforcedStrat(Strategy):
 
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
-        self.__min_exploration_rate = 0.001
+        self.__min_exploration_rate = 0.01
         self.__exploration_decay_rate = 0.001
 
-        self.__learning_rate = 0.0001
-        self.__discount_rate = 0.99
+        self.__learning_rate = 0.001
+        self.__discount_rate = 0.999
 
         self.__avg_loss = 0
         self.__loss_list = np.zeros([1])
