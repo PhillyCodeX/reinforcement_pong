@@ -103,7 +103,7 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
-        self.__TARGET_THRESHOLD = 1000
+        self.__TARGET_THRESHOLD = 3000
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = ReplayMemory(1000)
@@ -112,7 +112,7 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.0001
+        self.__exploration_decay_rate = 0.000001
 
         self.__learning_rate = 1e-3
         self.__discount_rate = 0.999
@@ -146,15 +146,14 @@ class ReinforcedStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
         if self.__replay_mem.memory:
-            self.__optimize()    
+            self.optimize()    
             self.__steps_done += 1
 
-            if self.__steps_done >= self.__TARGET_THRESHOLD//3:
-                self.__exploration_rate -= self.__exploration_decay_rate 
+            self.__exploration_rate -= self.__exploration_decay_rate 
 
-                if self.__steps_done >= self.__TARGET_THRESHOLD:
-                    self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
-                    self.steps_done = 0
+            if self.__steps_done >= self.__TARGET_THRESHOLD:
+                self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
+                self.steps_done = 0
 
 
     def __update_loss(self, p_loss):
@@ -169,7 +168,7 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = 0
 
 
-    def __optimize(self):
+    def optimize(self):
         experience = random.choice(self.__replay_mem.memory)
         exp_s = experience.s
         exp_s_1 = experience.s_1

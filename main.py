@@ -1,18 +1,24 @@
 import src.game_objects as go
 import src.strategies as strat
+import datetime
 
 TRAIN_MODE = True
 DELIMITER = ";"
-RESUME = True
+RESUME = False
 
 def train(p_nepisodes):
-    logging_row = "episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
+    logging_row = "timestamp;episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
 
     with open("train.log", "a") as myfile:
             myfile.write(logging_row)
 
     for i in range(p_nepisodes):
-        logging_row = str(i)
+        today = datetime.datetime.today() 
+        dt=datetime.datetime.strftime(today,'%Y%m%d%H%M%S')
+
+        logging_row = dt
+        logging_row += DELIMITER
+        logging_row += str(i)
         logging_row += DELIMITER
         
         new_game = go.Game()
