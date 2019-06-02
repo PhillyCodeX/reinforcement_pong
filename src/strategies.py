@@ -130,7 +130,7 @@ class ReinforcedStrat(Strategy):
     def next_pos(self, p_paddle, p_dir_up):
         exploration_rate_threshold = random.uniform(0,1)
         up_switch = True
-        
+
         if exploration_rate_threshold > self.__exploration_rate and self.__replay_mem.memory:
             with torch.no_grad():
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
@@ -174,7 +174,7 @@ class ReinforcedStrat(Strategy):
         exp_s_1 = experience.s_1
         exp_r_1 = experience.r_1
 
-        q_value = self._ReinforcedStrat__policy_network(exp_s).max(1)[0].detach()
+        q_value = self._ReinforcedStrat__policy_network(exp_s).max(1)[0]
         q_value_target = exp_r_1 + self.__discount_rate * self._ReinforcedStrat__target_network(exp_s_1).max(1)[0].detach()
 
         loss = F.smooth_l1_loss(q_value, q_value_target)
