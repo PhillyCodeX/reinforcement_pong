@@ -199,7 +199,8 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = np.sum(self.__reward_list)
 
     def __img_processing(self, p_img_matrix):
-        np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32) 
+        np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32)
+        np_img[(np_img > 0) & (np_img < np.amax(np_img))] = 0
         np_normalized = np_img / np.amax(np_img)
         np_stacked_state = np.vstack((np_normalized[0],np_normalized[1],np_normalized[2],np_normalized[3]))
 
