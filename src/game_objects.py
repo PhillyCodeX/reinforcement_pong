@@ -356,8 +356,8 @@ class Game(object):
             pygame.draw.rect(screen, (255,255,255),[self.area.paddle2.x_pos,self.area.paddle2.y_pos,10,self.area.paddle2.length])
             pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
 
-            screen.blit(score_font.render(str(self.player1.points), True, (255,255,255)), (self.area.width / 4, 50))
-            screen.blit(score_font.render(str(self.player2.points), True, (255,255,255)), (self.area.width / 1.25, 50))
+            screen.blit(score_font.render(str(self.player1.points), True, (255,0,255)), (self.area.width / 4, 50))
+            screen.blit(score_font.render(str(self.player2.points), True, (255,0,255)), (self.area.width / 1.25, 50))
 
             pygame.display.flip()
 
