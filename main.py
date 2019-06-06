@@ -2,7 +2,7 @@ import src.game_objects as go
 import src.strategies as strat
 import datetime
 
-TRAIN_MODE = False
+TRAIN_MODE = True
 DELIMITER = ";"
 RESUME = False
 
@@ -26,9 +26,7 @@ def train(p_nepisodes):
         new_game.play()
 
         loss1 = new_game.player1.strategy.avg_loss
-        loss2 = new_game.player2.strategy.avg_loss
         reward1 = new_game.player1.strategy.sum_reward
-        reward2 = new_game.player2.strategy.sum_reward
 
         logging_row += str(new_game.player1.points)
         logging_row += DELIMITER
@@ -37,20 +35,13 @@ def train(p_nepisodes):
         logging_row += str(loss1)
         logging_row += DELIMITER
         logging_row += str(reward1)
-        logging_row += DELIMITER
-        logging_row += str(loss2)
-        logging_row += DELIMITER
-        logging_row += str(reward2)
-        logging_row += "\n" 
         
         new_game.player1.strategy.reset()
-        new_game.player2.strategy.reset()
         new_game.player1.points = 0
         new_game.player2.points = 0
 
         if i % 100 == 0:
             new_game.player1.strategy.safe_model('p1')
-            new_game.player2.strategy.safe_model('p2')
 
         with open("train.log", "a") as myfile:
             myfile.write(logging_row)
@@ -92,7 +83,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(200)
+        train(2)
     else:
         normal()
     
