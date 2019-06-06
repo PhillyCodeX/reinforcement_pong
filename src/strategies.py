@@ -107,7 +107,7 @@ class ReinforcedStrat(Strategy):
         self.__BATCH_SIZE = 10
 
         #list of tuples of state, action, reward+1, state+1
-        self.__replay_mem = ReplayMemory(1000)
+        self.__replay_mem = ReplayMemory(10000)
         self.__last_exp = Experience()
 
         self.__exploration_rate = 1
@@ -190,7 +190,7 @@ class ReinforcedStrat(Strategy):
         q_value = self._ReinforcedStrat__policy_network(exp_s).gather(1, exp_a.view(-1,1))
         q_value_target = exp_r_1 + self.__discount_rate * self._ReinforcedStrat__target_network(exp_s_1).max(1)[0].detach()
 
-        loss = F.smooth_l1_loss(q_value, q_value_target)
+        loss = F.smooth_l1_loss(q_value, q_value_target.view(-1,1))
         self.__update_loss(loss)
 
         self.__optimizer.zero_grad()
