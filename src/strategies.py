@@ -104,6 +104,7 @@ class ReinforcedStrat(Strategy):
 
         self.__steps_done = 0
         self.__TARGET_THRESHOLD = 3000
+        self.__BATCH_SIZE = 10
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = ReplayMemory(1000)
@@ -145,7 +146,7 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.a = "DOWN"
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
-        if self.__replay_mem.memory:
+        if len(self.__replay_mem.memory) >= self.__BATCH_SIZE:
             self.optimize()    
             self.__steps_done += 1
 
@@ -169,12 +170,24 @@ class ReinforcedStrat(Strategy):
 
 
     def optimize(self):
-        experience = random.choice(self.__replay_mem.memory)
-        exp_s = experience.s
-        exp_s_1 = experience.s_1
-        exp_r_1 = experience.r_1
+        experiences = random.sample(self.__replay_mem.memory, self.__BATCH_SIZE)
 
-        q_value = self._ReinforcedStrat__policy_network(exp_s).max(1)[0]
+        exp_s = torch.cat(list(e.s for e in experiences))
+        exp_s_1 = torch.cat(list(e.s_1 for e in experiences))
+        exp_r_1 = torch.DoubleTensor(list(e.r_1 for e in experiences))
+        exp_a = list(e.a for e in experiences)
+
+        for n, i in enumerate(exp_a):
+            if i == 'UP':
+                exp_a[n] = 1
+            elif i == 'DOWN':
+                exp_a[n] = 0 
+            else:
+                exp_a[n] = random.randint(0,1)
+                
+        exp_a = torch.LongTensor(exp_a)
+
+        q_value = self._ReinforcedStrat__policy_network(exp_s).gather(1, exp_a.view(-1,1))
         q_value_target = exp_r_1 + self.__discount_rate * self._ReinforcedStrat__target_network(exp_s_1).max(1)[0].detach()
 
         loss = F.smooth_l1_loss(q_value, q_value_target)
