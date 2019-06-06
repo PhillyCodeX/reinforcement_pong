@@ -1,4 +1,4 @@
-from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat
+from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat, FollowTheBallStrat
 import numpy as np
 
 import os
@@ -265,6 +265,8 @@ class Game(object):
                     strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
             elif chosen_strategy == 'random':
                 strategy = RandomStrat()
+            elif chosen_strategy == 'follow':
+                strategy = FollowTheBallStrat(self.__area.ball)
             elif chosen_strategy == 'god':
                 strategy = GodStrat()
             else:

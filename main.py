@@ -2,7 +2,7 @@ import src.game_objects as go
 import src.strategies as strat
 import datetime
 
-TRAIN_MODE = True
+TRAIN_MODE = False
 DELIMITER = ";"
 RESUME = False
 
