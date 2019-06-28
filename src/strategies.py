@@ -1,6 +1,7 @@
 import abc
 import random
 import pickle
+import datetime
 import numpy as np
 np.seterr(invalid='ignore')
 
@@ -101,6 +102,13 @@ class ManualStrat(Strategy):
 
 class ReinforcedStrat(Strategy):
     def __init__(self, p_width, p_height, p_name, p_resume=False ):
+        logging_row = "timestamp;exploration_rate;explore\n"
+
+        self.__identity = p_name
+
+        with open("explore_exploit_"+self.__identity+".log", "a") as myfile:
+            myfile.write(logging_row)
+
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.__resize_factor = 40
@@ -116,8 +124,8 @@ class ReinforcedStrat(Strategy):
         self.__heigth = int(adapter_heigth)
 
         if p_resume:
-            self.__policy_network = pickle.load(open('models/'+p_name+'_save_pn.p', 'rb'))
-            self.__target_network = pickle.load(open('models/'+p_name+'_save_tn.p', 'rb'))
+            self.__policy_network = pickle.load(open('models/'+self.__identity+'_save_pn.p', 'rb'))
+            self.__target_network = pickle.load(open('models/'+self.__identity+'_save_tn.p', 'rb'))
         else:
             self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
             self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
@@ -149,20 +157,36 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = 0
         self.__reward_list = np.zeros([1])
 
-    def safe_model(self, p_name):
-        pickle.dump(self.__policy_network, open('models/'+p_name+'_save_pn.p', 'wb'))
-        pickle.dump(self.__target_network, open('models/'+p_name+'_save_tn.p', 'wb'))
+    def safe_model(self):
+        pickle.dump(self.__policy_network, open('models/'+self.__identity+'_save_pn.p', 'wb'))
+        pickle.dump(self.__target_network, open('models/'+self.__identity+'_save_tn.p', 'wb'))
 
     def next_pos(self, p_paddle, p_dir_up):
+        today = datetime.datetime.today() 
+        dt=datetime.datetime.strftime(today,'%Y%m%d%H%M%S')
+    
         exploration_rate_threshold = random.uniform(0,1)
         up_switch = True
+        explore = True
 
         if exploration_rate_threshold > self.__exploration_rate and self.__replay_mem.memory:
+            explore = False
             with torch.no_grad():
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
                 up_switch = torch.max(self._ReinforcedStrat__policy_network(current_state),0)[0].argmin().item()
         else:
+            explore = True
             up_switch = random.randint(0,1)
+
+        logging_row = dt
+        logging_row += ";"
+        logging_row += str(self.__exploration_rate)
+        logging_row += ";"
+        logging_row += str(explore)
+        logging_row += "\n"
+
+        with open("explore_exploit_"+self.__identity+".log", "a") as myfile:
+            myfile.write(logging_row)
 
         if up_switch and p_paddle.up_moveable:
             self.__last_exp.a = "UP"

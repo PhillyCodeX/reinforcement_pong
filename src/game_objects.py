@@ -284,7 +284,7 @@ class Game(object):
             self.player1.paddle.y_pos = 0
             self.player1.paddle.length = self.area.height
 
-        self.player2 = self.newPlayer("p2", False, False)
+        self.player2 = self.newPlayer("p2", True, False)
         self.player2.paddle = self.__area.paddle2
 
         if self.player2.strategy.__class__.__name__ == 'GodStrat':
