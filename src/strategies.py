@@ -123,12 +123,8 @@ class ReinforcedStrat(Strategy):
         self.__width = int(adapted_width)
         self.__heigth = int(adapter_heigth)
 
-        if p_resume:
-            self.__policy_network = pickle.load(open('models/'+self.__identity+'_save_pn.p', 'rb'))
-            self.__target_network = pickle.load(open('models/'+self.__identity+'_save_tn.p', 'rb'))
-        else:
-            self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
-            self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+        self.__policy_network = DQN(self.__heigth, self.__width, 2).to(device).double()
+        self.__target_network = DQN(self.__heigth, self.__width, 2).to(device).double()
 
         self.__target_network.load_state_dict(self.__policy_network.state_dict())
         self.__target_network.eval()
@@ -156,6 +152,10 @@ class ReinforcedStrat(Strategy):
 
         self.__sum_reward = 0
         self.__reward_list = np.zeros([1])
+
+        if p_resume:
+            self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
+            self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
 
     def safe_state(self):
         pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
