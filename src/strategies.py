@@ -200,7 +200,8 @@ class ReinforcedStrat(Strategy):
             self.optimize()    
             self.__steps_done += 1
 
-            self.__exploration_rate -= self.__exploration_decay_rate 
+            if self.__exploration_rate >= self.__min_exploration_rate:
+                self.__exploration_rate -= self.__exploration_decay_rate 
 
             if self.__steps_done >= self.__TARGET_THRESHOLD:
                 self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
