@@ -371,7 +371,7 @@ class Game(object):
         self.player2.strategy.reset()
         self.player1.points = 0
         self.player2.points = 0
-        self.area = Area()
+        #self.area = Area()
         self.winner = None
         self.__last_states = list()
 
