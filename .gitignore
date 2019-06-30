@@ -105,3 +105,6 @@ venv.bak/
 
 # Visual Code
 .vscode
+
+# Machine Learning
+.p
