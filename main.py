@@ -4,13 +4,16 @@ import datetime
 
 TRAIN_MODE = True
 DELIMITER = ";"
-RESUME = False
+RESUME = True
 
 def train(p_nepisodes):
     logging_row = "timestamp;episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
 
     with open("train.log", "a") as myfile:
             myfile.write(logging_row)
+
+    new_game = go.Game()
+    new_game.setPlayers(TRAIN_MODE, RESUME)
 
     for i in range(p_nepisodes):
         today = datetime.datetime.today() 
@@ -21,8 +24,6 @@ def train(p_nepisodes):
         logging_row += str(i)
         logging_row += DELIMITER
         
-        new_game = go.Game()
-        new_game.setPlayers(TRAIN_MODE, RESUME)
         new_game.play()
 
         loss1 = new_game.player1.strategy.avg_loss
@@ -43,14 +44,11 @@ def train(p_nepisodes):
         logging_row += str(reward2)
         logging_row += "\n"
         
-        new_game.player1.strategy.reset()
-        new_game.player2.strategy.reset()
-        new_game.player1.points = 0
-        new_game.player2.points = 0
-
         if i % 100 == 0:
             new_game.player1.strategy.safe_model()
             new_game.player2.strategy.safe_model()
+
+        new_game.reset()
 
         with open("train.log", "a") as myfile:
             myfile.write(logging_row)
