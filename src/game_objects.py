@@ -366,6 +366,15 @@ class Game(object):
             surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
             self.cur_matrix = surface_array
 
+    def reset(self):
+        self.player1.strategy.reset()
+        self.player2.strategy.reset()
+        self.player1.points = 0
+        self.player2.points = 0
+        self.area = Area()
+        self.winner = None
+        self.__last_states = list()
+
     def __setarea(self, p_area):
         self.__area = p_area
 
