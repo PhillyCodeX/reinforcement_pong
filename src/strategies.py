@@ -102,7 +102,7 @@ class ManualStrat(Strategy):
 
 class ReinforcedStrat(Strategy):
     def __init__(self, p_width, p_height, p_name, p_resume=False ):
-        logging_row = "timestamp;exploration_rate;explore\n"
+        logging_row = "timestamp;exploration_rate;steps_done;explore\n"
 
         self.__identity = p_name
 
@@ -182,6 +182,8 @@ class ReinforcedStrat(Strategy):
         logging_row = dt
         logging_row += ";"
         logging_row += str(self.__exploration_rate)
+        logging_row += ";"
+        logging_row += str(self.__steps_done)
         logging_row += ";"
         logging_row += str(explore)
         logging_row += "\n"
