@@ -4,7 +4,7 @@ import datetime
 
 TRAIN_MODE = True
 DELIMITER = ";"
-RESUME = True
+RESUME = False
 
 def train(p_nepisodes):
     logging_row = "timestamp;episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
@@ -92,7 +92,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(2)
+        train(10)
     else:
         normal()
     
