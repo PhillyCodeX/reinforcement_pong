@@ -146,7 +146,7 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.000001
+        self.__exploration_decay_rate = 0.001
 
         self.__learning_rate = 1e-3
         self.__discount_rate = 0.999
@@ -157,9 +157,10 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = 0
         self.__reward_list = np.zeros([1])
 
-    def safe_model(self):
-        pickle.dump(self.__policy_network, open('models/'+self.__identity+'_save_pn.p', 'wb'))
-        pickle.dump(self.__target_network, open('models/'+self.__identity+'_save_tn.p', 'wb'))
+    def safe_state(self):
+        pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
+        #pickle.dump(self.__policy_network, open('models/'+self.__identity+'_save_pn.p', 'wb'))
+        #pickle.dump(self.__target_network, open('models/'+self.__identity+'_save_tn.p', 'wb'))
 
     def next_pos(self, p_paddle, p_dir_up):
         today = datetime.datetime.today() 

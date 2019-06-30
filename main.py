@@ -45,8 +45,8 @@ def train(p_nepisodes):
         logging_row += "\n"
         
         if i % 100 == 0:
-            new_game.player1.strategy.safe_model()
-            new_game.player2.strategy.safe_model()
+            new_game.player1.strategy.safe_state()
+            new_game.player2.strategy.safe_state()
 
         new_game.reset()
 
