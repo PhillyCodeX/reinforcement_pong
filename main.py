@@ -92,7 +92,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(10)
+        train(20)
     else:
         normal()
     
