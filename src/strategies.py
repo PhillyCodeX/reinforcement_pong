@@ -132,33 +132,19 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
-<<<<<<< HEAD
         self.__TARGET_THRESHOLD = 5000
         self.__BATCH_SIZE = 10
 
         #list of tuples of state, action, reward+1, state+1
         self.__replay_mem = ReplayMemory(5000)
-=======
-        self.__TARGET_THRESHOLD = 3000
-        self.__BATCH_SIZE = 10
-
-        #list of tuples of state, action, reward+1, state+1
-        self.__replay_mem = ReplayMemory(10000)
->>>>>>> refs/remotes/origin/master
         self.__last_exp = Experience()
 
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-<<<<<<< HEAD
         self.__exploration_decay_rate = 1e-4
 
         self.__learning_rate = 1e-7
-=======
-        self.__exploration_decay_rate = 0.001
-
-        self.__learning_rate = 1e-3
->>>>>>> refs/remotes/origin/master
         self.__discount_rate = 0.999
 
         self.__avg_loss = 0
@@ -188,11 +174,7 @@ class ReinforcedStrat(Strategy):
             explore = False
             with torch.no_grad():
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
-<<<<<<< HEAD
                 up_switch = self._ReinforcedStrat__policy_network(current_state).argmax().item()
-=======
-                up_switch = torch.max(self._ReinforcedStrat__policy_network(current_state),0)[0].argmin().item()
->>>>>>> refs/remotes/origin/master
         else:
             explore = True
             up_switch = random.randint(0,1)

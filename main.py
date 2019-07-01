@@ -92,11 +92,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-<<<<<<< HEAD
         train(100)
-=======
-        train(20)
->>>>>>> refs/remotes/origin/master
     else:
         normal()
     
