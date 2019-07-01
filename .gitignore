@@ -108,3 +108,5 @@ venv.bak/
 
 # Machine Learning
 .p
+models/p1.p
+models/p2.p
