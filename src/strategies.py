@@ -142,7 +142,7 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.0005
+        self.__exploration_decay_rate = 0.001
 
         self.__learning_rate = 1e-3
         self.__discount_rate = 0.999
@@ -174,7 +174,7 @@ class ReinforcedStrat(Strategy):
             explore = False
             with torch.no_grad():
                 current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
-                up_switch = torch.max(self._ReinforcedStrat__policy_network(current_state),0)[0].argmin().item()
+                up_switch = self._ReinforcedStrat__policy_network(current_state).argmax().item()
         else:
             explore = True
             up_switch = random.randint(0,1)
