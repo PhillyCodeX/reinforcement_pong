@@ -142,7 +142,7 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 0.001
+        self.__exploration_decay_rate = 0.0005
 
         self.__learning_rate = 1e-3
         self.__discount_rate = 0.999
