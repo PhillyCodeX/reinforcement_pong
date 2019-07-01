@@ -1,1 +1,1 @@
-spell run -t CPU --pip-req requirements.txt "python main.py"
+spell run -t CPU --framework pytorch --pip-req requirements.txt "python main.py"
