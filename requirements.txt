@@ -1,4 +1,4 @@
 Pillow
 numpy
 pygame
-pytorch
+torch
