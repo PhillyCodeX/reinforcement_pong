@@ -134,11 +134,11 @@ class Area(object):
         if self.ball.y_pos > self.height or self.ball.y_pos < 0:
             self.ball.y_dir = -self.ball.y_dir
         
-        if self.ball.x_pos > self.paddle2.x_pos:
+        if self.ball.x_pos >= self.paddle2.x_pos:
             if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
                 self.ball.x_dir = -self.ball.x_dir
                 return
-        elif self.ball.x_pos < self.paddle1.x_pos:
+        elif self.ball.x_pos <= self.paddle1.x_pos:
             if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
                 self.ball.x_dir = -self.ball.x_dir
                 return
@@ -284,7 +284,7 @@ class Game(object):
             self.player1.paddle.y_pos = 0
             self.player1.paddle.length = self.area.height
 
-        self.player2 = self.newPlayer("p2", True, False)
+        self.player2 = self.newPlayer("p2", p_train_mode, False)
         self.player2.paddle = self.__area.paddle2
 
         if self.player2.strategy.__class__.__name__ == 'GodStrat':
@@ -320,16 +320,26 @@ class Game(object):
                 if event.type == pygame.KEYUP:
                     dir_up = None
 
+            screen.fill((0, 0, 0))
+
             self.area.check_paddle_moveable(self.player1.paddle)
             self.area.check_paddle_moveable(self.player2.paddle)
 
-            self.player1.next_pos(dir_up)     
-            self.player2.next_pos(dir_up)     
+            self.player1.next_pos(dir_up)
+            pygame.draw.rect(screen, (255, 255, 255),
+                             [self.area.paddle1.x_pos, self.area.paddle1.y_pos, 10, self.area.paddle1.length])
+
+            self.player2.next_pos(dir_up)
+            pygame.draw.rect(screen, (255, 255, 255),
+                             [self.area.paddle2.x_pos, self.area.paddle2.y_pos, 10, self.area.paddle2.length])
+            pygame.display.flip()
 
             circle_time_passed = clock.tick(60)
             circle_time_sec = circle_time_passed / 1000.0
             
             self.area.ball.next_pos(circle_time_sec)
+            pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
+            pygame.display.flip()
             score_for = self.area.resolve_collisions()
 
             if score_for == 1:
@@ -341,6 +351,12 @@ class Game(object):
                 self.player1.strategy.notify_score(0)
                 self.player2.strategy.notify_score(1)
 
+            screen.blit(score_font.render(str(self.player1.points), True, (255, 0, 255)), (self.area.width / 4, 50))
+            screen.blit(score_font.render(str(self.player2.points), True, (255, 0, 255)),
+                        (self.area.width / 1.25, 50))
+            pygame.display.flip()
+
+
             if self.player1.points == self.winning_score:
                 self.winner = self.player1
                 #self.player1.strategy.notify_score(10)
@@ -351,15 +367,6 @@ class Game(object):
                 return
 
             score_for = 0
-
-            screen.fill((0,0,0))
-
-            pygame.draw.rect(screen, (255,255,255),[self.area.paddle1.x_pos,self.area.paddle1.y_pos,10,self.area.paddle1.length])
-            pygame.draw.rect(screen, (255,255,255),[self.area.paddle2.x_pos,self.area.paddle2.y_pos,10,self.area.paddle2.length])
-            pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
-
-            screen.blit(score_font.render(str(self.player1.points), True, (255,0,255)), (self.area.width / 4, 50))
-            screen.blit(score_font.render(str(self.player2.points), True, (255,0,255)), (self.area.width / 1.25, 50))
 
             pygame.display.flip()
 

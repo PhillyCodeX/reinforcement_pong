@@ -92,7 +92,11 @@ def normal():
 
 def main():
     if TRAIN_MODE:
+<<<<<<< HEAD
         train(2)
+=======
+        train(500)
+>>>>>>> 1e885c1a72899cdd4e9b00a31296b8147d7a0519
     else:
         normal()
     
