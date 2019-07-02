@@ -208,7 +208,6 @@ class ReinforcedStrat(Strategy):
             if self.__steps_done >= self.__TARGET_THRESHOLD:
                 self.__target_network.load_state_dict(self.__policy_network.state_dict())
                 self.__steps_done = 0
-                self.__target_network.load_state_dict(self.__policy_network.state_dict())
 
 
     def __update_loss(self, p_loss):
