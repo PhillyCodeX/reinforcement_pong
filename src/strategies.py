@@ -154,7 +154,7 @@ class ReinforcedStrat(Strategy):
         self.__reward_list = np.zeros([1])
 
 
-    def safe_state(self):
+    def persist_strategy(self):
         pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
 
     def next_pos(self, p_paddle, p_dir_up):
