@@ -173,8 +173,8 @@ class ReinforcedStrat(Strategy):
         if exploration_rate_threshold > self.__exploration_rate and self.__replay_mem.memory:
             explore = False
             with torch.no_grad():
-                current_state = self._ReinforcedStrat__replay_mem.memory[-1].s
-                up_switch = self._ReinforcedStrat__policy_network(current_state).argmax().item()
+                current_state = self.__replay_mem.memory[-1].s
+                up_switch = self.__policy_network(current_state).argmax().item()
         else:
             explore = True
             up_switch = random.randint(0,1)
@@ -206,8 +206,9 @@ class ReinforcedStrat(Strategy):
                 self.__exploration_rate -= self.__exploration_decay_rate 
 
             if self.__steps_done >= self.__TARGET_THRESHOLD:
-                self._ReinforcedStrat__target_network.load_state_dict(self._ReinforcedStrat__policy_network.state_dict())
+                self.__target_network.load_state_dict(self.__policy_network.state_dict())
                 self.__steps_done = 0
+                self.__target_network.load_state_dict(self.__policy_network.state_dict())
 
 
     def __update_loss(self, p_loss):
@@ -240,8 +241,8 @@ class ReinforcedStrat(Strategy):
                 
         exp_a = torch.LongTensor(exp_a)
 
-        q_value = self._ReinforcedStrat__policy_network(exp_s).gather(1, exp_a.view(-1,1))
-        q_value_target = exp_r_1 + self.__discount_rate * self._ReinforcedStrat__target_network(exp_s_1).max(1)[0].detach()
+        q_value = self.__policy_network(exp_s).gather(1, exp_a.view(-1,1))
+        q_value_target = exp_r_1 + self.__discount_rate * self.__target_network(exp_s_1).max(1)[0].detach()
 
         loss = F.smooth_l1_loss(q_value, q_value_target.view(-1,1))
         self.__update_loss(loss)
@@ -249,7 +250,7 @@ class ReinforcedStrat(Strategy):
         self.__optimizer.zero_grad()
 
         loss.backward()
-        for param in self._ReinforcedStrat__policy_network.parameters():
+        for param in self.__policy_network.parameters():
             param.grad.data.clamp_(-1, 1)
 
         self.__optimizer.step()
