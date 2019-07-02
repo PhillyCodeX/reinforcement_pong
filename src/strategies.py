@@ -154,10 +154,6 @@ class ReinforcedStrat(Strategy):
         self.__reward_list = np.zeros([1])
 
 
-        if p_resume:
-            self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
-
-
     def safe_state(self):
         pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
 

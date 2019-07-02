@@ -1,6 +1,6 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat, FollowTheBallStrat
 import numpy as np
-
+import pickle
 import os
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -251,7 +251,12 @@ class Game(object):
     def newPlayer(self,  p_name, p_train_mode = False, p_resume = False):
         if p_train_mode:
             name = "Miles Davis"
-            strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
+
+            if p_resume:
+                strategy = pickle.load(open('models/'+p_name+'.p', 'rb'))
+            else:
+                strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
+
         else:
             name = input("Enter your name: ")
             
