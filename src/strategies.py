@@ -71,12 +71,12 @@ class FollowTheBallStrat(Strategy):
 
     def next_pos(self, p_paddle, p_dir_up):
 
-        follow_or_not = random.randint(0,1)
+        follow_or_not = random.randint(0,100)
         up_down_ops = ['+','-']   
 
         ops = random.choice(up_down_ops)
 
-        if follow_or_not:
+        if follow_or_not > 10:
             if self.__ball.y_pos < p_paddle.y_pos and self.__ball.y_dir < 0 and p_paddle.up_moveable:
                 p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
             elif self.__ball.y_pos > p_paddle.y_pos and self.__ball.y_dir > 0 and p_paddle.down_moveable:

@@ -60,7 +60,7 @@ class Paddle(object):
     velocity = property(__getvelocity,__setvelocity)
 
 class Ball(object):
-    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=20):
+    def __init__(self, p_x_pos, p_y_pos, p_x_dir, p_y_dir, p_velocity=5):
         self.__velocity = p_velocity
         self.__x_pos = p_x_pos
         self.__y_pos = p_y_pos
@@ -337,14 +337,9 @@ class Game(object):
             self.player2.next_pos(dir_up)
             pygame.draw.rect(screen, (255, 255, 255),
                              [self.area.paddle2.x_pos, self.area.paddle2.y_pos, 10, self.area.paddle2.length])
-            pygame.display.flip()
 
-            circle_time_passed = clock.tick(60)
-            circle_time_sec = circle_time_passed / 1000.0
-            
-            self.area.ball.next_pos(circle_time_sec)
+            self.area.ball.next_pos(1)
             pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
-            pygame.display.flip()
             score_for = self.area.resolve_collisions()
 
             if score_for == 1:
@@ -359,8 +354,9 @@ class Game(object):
             screen.blit(score_font.render(str(self.player1.points), True, (255, 0, 255)), (self.area.width / 4, 50))
             screen.blit(score_font.render(str(self.player2.points), True, (255, 0, 255)),
                         (self.area.width / 1.25, 50))
-            pygame.display.flip()
 
+
+            pygame.display.flip()
 
             if self.player1.points == self.winning_score:
                 self.winner = self.player1
@@ -373,7 +369,6 @@ class Game(object):
 
             score_for = 0
 
-            pygame.display.flip()
 
             surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
             self.cur_matrix = surface_array
