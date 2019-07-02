@@ -153,6 +153,7 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = 0
         self.__reward_list = np.zeros([1])
 
+
         if p_resume:
             self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
             self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))

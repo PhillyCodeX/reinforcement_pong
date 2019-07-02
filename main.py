@@ -4,7 +4,7 @@ import datetime
 
 TRAIN_MODE = True
 DELIMITER = ";"
-RESUME = False
+RESUME = True
 
 def train(p_nepisodes):
     logging_row = "timestamp;episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
@@ -66,7 +66,7 @@ def normal():
         
         if want_new_players:
             want_new_players = False
-            new_game.setPlayers()
+            new_game.setPlayers(p_resume=RESUME)
             print('Players are set!')
             print('Player 1, Welcome!: '+new_game.player1.name)
             print('Player 2, Welcome!: '+new_game.player2.name)
@@ -92,7 +92,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(500)
+        train(10)
     else:
         normal()
     
