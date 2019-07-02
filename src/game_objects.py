@@ -277,7 +277,7 @@ class Game(object):
         return player
 
     def setPlayers(self, p_train_mode = False, p_resume = False):
-        self.player1 = self.newPlayer("p1", p_train_mode, p_resume)
+        self.player1 = self.newPlayer("p1", p_train_mode, False)
         self.player1.paddle = self.__area.paddle1
 
         if self.player1.strategy.__class__.__name__ == 'GodStrat':

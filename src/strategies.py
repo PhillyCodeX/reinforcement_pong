@@ -156,12 +156,10 @@ class ReinforcedStrat(Strategy):
 
         if p_resume:
             self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
-            self = pickle.load(open('models/'+self.__identity+'.p', 'rb'))
+
 
     def safe_state(self):
         pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
-        #pickle.dump(self.__policy_network, open('models/'+self.__identity+'_save_pn.p', 'wb'))
-        #pickle.dump(self.__target_network, open('models/'+self.__identity+'_save_tn.p', 'wb'))
 
     def next_pos(self, p_paddle, p_dir_up):
         today = datetime.datetime.today() 
