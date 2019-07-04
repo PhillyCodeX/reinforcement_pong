@@ -15,32 +15,71 @@ import torchvision.transforms as T
 import torch.nn.functional as F
 
 class Strategy(metaclass=abc.ABCMeta):
+    """
+        TODO Dokumentieren
+    """
+
     def __init__(self):
-       self.__paddle = None
+        """
+            TODO Dokumentieren
+        """
+        
+        self.__paddle = None
 
     def __setpaddle(self, p_paddle):
+        """
+            TODO Dokumentieren
+        """
+
         self.__paddle = p_paddle
 
     def __getpaddle(self):
+        """
+            TODO Dokumentieren
+        """
+
         return self.__paddle
 
     @abc.abstractmethod
     def next_pos(self, p_pos, p_vel, p_dir_up):
-       pass 
+        """
+            TODO Dokumentieren
+        """
+
+        pass 
 
     def notify_score(self, p_score):
+        """
+            TODO Dokumentieren
+        """
+
         pass
 
     def new_state(self, p_state, p_is_first_state=False):
+        """
+            TODO Dokumentieren
+        """
+
         pass
 
     paddle = property(__getpaddle,__setpaddle)
 
 class DumbStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
+
     def __init__(self):
+        """
+            TODO Dokumentieren
+        """
+
         self.__up_switch = True
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
 
         if p_paddle.up_moveable == False:
             self.__up_switch = False
@@ -53,10 +92,21 @@ class DumbStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class RandomStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
+
     def __init__(self):
+        """
+            TODO Dokumentieren
+        """
+
         self.__up_switch = True
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
 
         up_switch = random.randint(0,1)
 
@@ -66,10 +116,21 @@ class RandomStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class FollowTheBallStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
+
     def __init__(self, p_ball):
+        """
+            TODO Dokumentieren
+        """
+
         self.__ball = p_ball
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
 
         follow_or_not = random.randint(0,100)
         up_down_ops = ['+','-']   
@@ -92,8 +153,14 @@ class FollowTheBallStrat(Strategy):
 
 
 class ManualStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
 
         if p_dir_up == True and p_paddle.up_moveable:
             p_paddle.y_pos = p_paddle.y_pos-p_paddle.velocity
@@ -101,7 +168,15 @@ class ManualStrat(Strategy):
             p_paddle.y_pos = p_paddle.y_pos+p_paddle.velocity
 
 class ReinforcedStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
+
     def __init__(self, p_width, p_height, p_name, p_resume=False ):
+        """
+            TODO Dokumentieren
+        """
+
         logging_row = "timestamp;exploration_rate;steps_done;explore\n"
 
         self.__identity = p_name
@@ -155,9 +230,17 @@ class ReinforcedStrat(Strategy):
 
 
     def persist_strategy(self):
+        """
+            TODO Dokumentieren
+        """
+
         pickle.dump(self, open('models/'+self.__identity+'.p', 'wb'))
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
+
         today = datetime.datetime.today() 
         dt=datetime.datetime.strftime(today,'%Y%m%d%H%M%S')
     
@@ -206,11 +289,19 @@ class ReinforcedStrat(Strategy):
 
 
     def __update_loss(self, p_loss):
+        """
+            TODO Dokumentieren
+        """
+
         self.__loss_list = np.append(self.__loss_list, p_loss.item())
         self.__avg_loss = np.median(self.__loss_list)
 
     
     def reset(self):
+        """
+            TODO Dokumentieren
+        """
+
         self.__loss_list = list()
         self.__reward_list = list()
         self.__avg_loss = 0
@@ -218,6 +309,10 @@ class ReinforcedStrat(Strategy):
 
 
     def optimize(self):
+        """
+            TODO Dokumentieren
+        """
+
         experiences = random.sample(self.__replay_mem.memory, self.__BATCH_SIZE)
 
         exp_s = torch.cat(list(e.s for e in experiences))
@@ -250,6 +345,10 @@ class ReinforcedStrat(Strategy):
         self.__optimizer.step()
 
     def notify_score(self, p_score):
+        """
+            TODO Dokumentieren
+        """
+
         if p_score == 0:
             self.__last_exp.r_1 = -1
             self.__reward_list = np.append(self.__reward_list, -1)
@@ -260,6 +359,10 @@ class ReinforcedStrat(Strategy):
         self.__sum_reward = np.sum(self.__reward_list)
 
     def __img_processing(self, p_img_matrix):
+        """
+            TODO Dokumentieren
+        """
+
         np_img = np.ascontiguousarray(p_img_matrix, dtype=np.float32)
         np_img[(np_img > 0) & (np_img < np.amax(np_img))] = 0
         np_normalized = np_img / np.amax(np_img)
@@ -274,7 +377,10 @@ class ReinforcedStrat(Strategy):
         return resize(processed_state).type('torch.DoubleTensor').unsqueeze(1)
 
     def new_state(self, p_state, p_is_first_state=False):
-        
+        """
+            TODO Dokumentieren
+        """
+
         processed_state = self.__img_processing(p_state)
 
         if p_is_first_state:
@@ -298,15 +404,30 @@ class ReinforcedStrat(Strategy):
             self.__last_exp.a = None
 
     def __getavg_loss(self):
+        """
+            TODO Dokumentieren
+        """
+
         return self.__avg_loss
 
     def __getsum_reward(self):
+        """
+            TODO Dokumentieren
+        """
+
         return self.__sum_reward 
 
     avg_loss = property(__getavg_loss)
     sum_reward = property(__getsum_reward)
     
 class GodStrat(Strategy):
+    """
+        TODO Dokumentieren
+    """
 
     def next_pos(self, p_paddle, p_dir_up):
+        """
+            TODO Dokumentieren
+        """
+        
         return
