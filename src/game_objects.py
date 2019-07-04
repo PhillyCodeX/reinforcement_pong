@@ -576,7 +576,9 @@ class Game(object):
                 if event.type == pygame.KEYUP:
                     dir_up = None
 
+            pygame.display.flip()
             screen.fill((0, 0, 0))
+
 
             self.area.check_paddle_moveable(self.player1.paddle)
             self.area.check_paddle_moveable(self.player2.paddle)
@@ -609,7 +611,7 @@ class Game(object):
                         (self.area.width / 1.25, 50))
 
 
-            pygame.display.flip()
+
 
             if self.player1.points == self.winning_score:
                 self.winner = self.player1
