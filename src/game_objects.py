@@ -1,6 +1,7 @@
 from src.strategies import Strategy, ManualStrat, DumbStrat, ReinforcedStrat, RandomStrat, GodStrat, FollowTheBallStrat
 import numpy as np
 import pickle
+import threading
 import os
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -296,6 +297,18 @@ class Game(object):
             self.player2.paddle.y_pos = 0
             self.player2.paddle.length = self.area.height
 
+    def __thread_p1(self, p_dir_up, p_screen):
+        self.player1.next_pos(p_dir_up)
+        pygame.draw.rect(p_screen, (255, 255, 255),[self.area.paddle1.x_pos, self.area.paddle1.y_pos, 10, self.area.paddle1.length])
+
+    def __thread_p2(self, p_dir_up, p_screen):
+        self.player2.next_pos(p_dir_up)
+        pygame.draw.rect(p_screen, (255, 255, 255),[self.area.paddle2.x_pos, self.area.paddle2.y_pos, 10, self.area.paddle2.length])
+
+    def __thread_ball(self, p_screen):
+        self.area.ball.next_pos(1)
+        pygame.draw.rect(p_screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
+
     def play(self):
         pygame.init()
         clock = pygame.time.Clock()
@@ -330,16 +343,18 @@ class Game(object):
             self.area.check_paddle_moveable(self.player1.paddle)
             self.area.check_paddle_moveable(self.player2.paddle)
 
-            self.player1.next_pos(dir_up)
-            pygame.draw.rect(screen, (255, 255, 255),
-                             [self.area.paddle1.x_pos, self.area.paddle1.y_pos, 10, self.area.paddle1.length])
+            p1_thread = threading.Thread(target=self.__thread_p1, args=(dir_up,screen,))
+            p2_thread = threading.Thread(target=self.__thread_p2, args=(dir_up,screen,))
+            ball_thread = threading.Thread(target=self.__thread_ball, args=(screen,))
+            
+            p1_thread.start()
+            p2_thread.start()
+            ball_thread.start()
 
-            self.player2.next_pos(dir_up)
-            pygame.draw.rect(screen, (255, 255, 255),
-                             [self.area.paddle2.x_pos, self.area.paddle2.y_pos, 10, self.area.paddle2.length])
+            p1_thread.join()
+            p2_thread.join()
+            ball_thread.join()
 
-            self.area.ball.next_pos(1)
-            pygame.draw.rect(screen, (255,255,255),[self.area.ball.x_pos,self.area.ball.y_pos,20,20])
             score_for = self.area.resolve_collisions()
 
             if score_for == 1:
