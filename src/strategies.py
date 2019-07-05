@@ -172,7 +172,7 @@ class ReinforcedStrat(Strategy):
         TODO Dokumentieren
     """
 
-    def __init__(self, p_width, p_height, p_name, p_resume=False ):
+    def __init__(self, p_width, p_height, p_name):
         """
             TODO Dokumentieren
         """
@@ -315,9 +315,9 @@ class ReinforcedStrat(Strategy):
 
         experiences = random.sample(self.__replay_mem.memory, self.__BATCH_SIZE)
 
-        exp_s = torch.cat(list(e.s for e in experiences))
-        exp_s_1 = torch.cat(list(e.s_1 for e in experiences))
-        exp_r_1 = torch.DoubleTensor(list(e.r_1 for e in experiences))
+        exp_s = torch.cat(list(e.s for e in experiences)).cuda()
+        exp_s_1 = torch.cat(list(e.s_1 for e in experiences)).cuda()
+        exp_r_1 = torch.DoubleTensor(list(e.r_1 for e in experiences)).cuda()
         exp_a = list(e.a for e in experiences)
 
         for n, i in enumerate(exp_a):
@@ -328,7 +328,7 @@ class ReinforcedStrat(Strategy):
             else:
                 exp_a[n] = random.randint(0,1)
                 
-        exp_a = torch.LongTensor(exp_a)
+        exp_a = torch.LongTensor(exp_a).cuda()
 
         q_value = self.__policy_network(exp_s).gather(1, exp_a.view(-1,1))
         q_value_target = exp_r_1 + self.__discount_rate * self.__target_network(exp_s_1).max(1)[0].detach()

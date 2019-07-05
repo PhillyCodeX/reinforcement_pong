@@ -472,10 +472,9 @@ class Game(object):
             name = "Miles Davis"
 
             if p_resume:
-                strategy = pickle.load(open('models/'+p_name+'.p', 'rb'))
+                strategy = pickle.load(open('models/' + p_name + '.p', 'rb'))
             else:
-                strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
-
+                strategy = ReinforcedStrat(self.__area.width, self.__area.height, p_name)
         else:
             name = input("Enter your name: ")
             
@@ -486,7 +485,11 @@ class Game(object):
             elif chosen_strategy == 'dumb':
                 strategy = DumbStrat()
             elif chosen_strategy == 'rl':
-                    strategy = ReinforcedStrat(self.__area.width,self.__area.height, p_name, p_resume)
+                if p_resume:
+                    strategy = pickle.load(open('models/' + p_name + '.p', 'rb'))
+                else:
+                    strategy = ReinforcedStrat(self.__area.width, self.__area.height, p_name)
+
             elif chosen_strategy == 'random':
                 strategy = RandomStrat()
             elif chosen_strategy == 'follow':
@@ -495,7 +498,9 @@ class Game(object):
                 strategy = GodStrat()
             else:
                 strategy = DumbStrat()
-        
+
+
+
         player = Player(name,strategy)
         
         return player
@@ -505,14 +510,14 @@ class Game(object):
             TODO: Comment
         """
 
-        self.player1 = self.newPlayer("p1", p_train_mode, False)
+        self.player1 = self.newPlayer("p1", p_train_mode, True)
         self.player1.paddle = self.__area.paddle1
 
         if self.player1.strategy.__class__.__name__ == 'GodStrat':
             self.player1.paddle.y_pos = 0
             self.player1.paddle.length = self.area.height
 
-        self.player2 = self.newPlayer("p2", p_train_mode, p_resume)
+        self.player2 = self.newPlayer("p2", p_train_mode, False)
         self.player2.paddle = self.__area.paddle2
 
         if self.player2.strategy.__class__.__name__ == 'GodStrat':

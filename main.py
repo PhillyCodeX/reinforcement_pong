@@ -2,9 +2,9 @@ import src.game_objects as go
 import src.strategies as strat
 import datetime
 
-TRAIN_MODE = True
+TRAIN_MODE = False
 DELIMITER = ";"
-RESUME = False
+RESUME = True
 
 def train(p_nepisodes):
     logging_row = "timestamp;episode_no;p1_points;p2_points;p1_avg_loss;p1_sum_reward;p2_avg_loss;p2_sum_reward\n"
@@ -92,7 +92,7 @@ def normal():
 
 def main():
     if TRAIN_MODE:
-        train(101)
+        train(300)
     else:
         normal()
     
