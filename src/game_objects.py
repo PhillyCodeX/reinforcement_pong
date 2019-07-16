@@ -258,11 +258,11 @@ class Area(object):
             self.ball.y_dir = -self.ball.y_dir
         
         if self.ball.x_pos >= self.paddle2.x_pos:
-            if self.ball.y_pos > self.paddle2.y_pos and self.ball.y_pos < self.paddle2.y_pos + self.paddle2.length:
+            if self.ball.y_pos >= self.paddle2.y_pos and self.ball.y_pos <= self.paddle2.y_pos + self.paddle2.length:
                 self.ball.x_dir = -self.ball.x_dir
                 return
         elif self.ball.x_pos <= self.paddle1.x_pos:
-            if self.ball.y_pos > self.paddle1.y_pos and self.ball.y_pos < self.paddle1.y_pos + self.paddle1.length:
+            if self.ball.y_pos >= self.paddle1.y_pos and self.ball.y_pos <= self.paddle1.y_pos + self.paddle1.length:
                 self.ball.x_dir = -self.ball.x_dir
                 return
 
