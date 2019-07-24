@@ -207,7 +207,7 @@ class ReinforcedStrat(Strategy):
         self.__optimizer = optim.RMSprop(self.__policy_network.parameters())
 
         self.__steps_done = 0
-        self.__TARGET_THRESHOLD = 5000
+        self.__TARGET_THRESHOLD = 3000
         self.__BATCH_SIZE = 10
 
         #list of tuples of state, action, reward+1, state+1
@@ -217,7 +217,7 @@ class ReinforcedStrat(Strategy):
         self.__exploration_rate = 1
         self.__max_exploration_rate = 1
         self.__min_exploration_rate = 0.01
-        self.__exploration_decay_rate = 1e-4
+        self.__exploration_decay_rate = 1e-5
 
         self.__learning_rate = 1e-7
         self.__discount_rate = 0.999

@@ -510,14 +510,14 @@ class Game(object):
             TODO: Comment
         """
 
-        self.player1 = self.newPlayer("p1", p_train_mode, True)
+        self.player1 = self.newPlayer("p1", p_train_mode, p_resume)
         self.player1.paddle = self.__area.paddle1
 
         if self.player1.strategy.__class__.__name__ == 'GodStrat':
             self.player1.paddle.y_pos = 0
             self.player1.paddle.length = self.area.height
 
-        self.player2 = self.newPlayer("p2", p_train_mode, False)
+        self.player2 = self.newPlayer("p2", p_train_mode, p_resume)
         self.player2.paddle = self.__area.paddle2
 
         if self.player2.strategy.__class__.__name__ == 'GodStrat':
@@ -554,7 +554,6 @@ class Game(object):
         """
 
         pygame.init()
-        clock = pygame.time.Clock()
 
         resolution = (self.area.width, self.area.height)
         screen = pygame.display.set_mode(resolution)
@@ -583,7 +582,6 @@ class Game(object):
 
             pygame.display.flip()
             screen.fill((0, 0, 0))
-
 
             self.area.check_paddle_moveable(self.player1.paddle)
             self.area.check_paddle_moveable(self.player2.paddle)
@@ -615,20 +613,14 @@ class Game(object):
             screen.blit(score_font.render(str(self.player2.points), True, (255, 0, 255)),
                         (self.area.width / 1.25, 50))
 
-
-
-
             if self.player1.points == self.winning_score:
                 self.winner = self.player1
-                #self.player1.strategy.notify_score(10)
                 return
             elif self.player2.points == self.winning_score:
                 self.winner = self.player2
-                #self.player2.strategy.notify_score(10)
                 return
 
             score_for = 0
-
 
             surface_array = pygame.surfarray.array2d(pygame.display.get_surface())
             self.cur_matrix = surface_array
@@ -642,7 +634,6 @@ class Game(object):
         self.player2.strategy.reset()
         self.player1.points = 0
         self.player2.points = 0
-        #self.area = Area()
         self.winner = None
         self.__last_states = list()
 
